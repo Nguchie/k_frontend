@@ -20,6 +20,11 @@ export const metadata: Metadata = {
     template: "%s | Kennice Tours Limited",
   },
   description: "Safari tours across Kenya, Uganda, Tanzania, Rwanda, and Zanzibar with clear itineraries, practical travel planning, and direct support.",
+  icons: {
+    icon: "/kennice_logo.jpeg",
+    shortcut: "/kennice_logo.jpeg",
+    apple: "/kennice_logo.jpeg",
+  },
   alternates: {
     canonical: absoluteUrl("/"),
   },
