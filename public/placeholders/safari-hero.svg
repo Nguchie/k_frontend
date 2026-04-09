@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1800 900">
+  <defs>
+    <linearGradient id="heroSky" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#f4d497"/>
+      <stop offset="55%" stop-color="#d98441"/>
+      <stop offset="100%" stop-color="#5d3423"/>
+    </linearGradient>
+  </defs>
+  <rect width="1800" height="900" fill="url(#heroSky)"/>
+  <path d="M0 640C220 600 360 520 540 530s260 90 430 70 280-140 430-140 250 110 400 100V900H0Z" fill="#7d6238"/>
+  <path d="M0 760C190 710 430 740 640 700s280-120 470-90 320 140 690 110V900H0Z" fill="#5d7a3d"/>
+  <circle cx="1380" cy="170" r="82" fill="#ffd86a"/>
+  <text x="120" y="150" fill="#fff6e9" font-family="Georgia, serif" font-size="82">Hero Placeholder</text>
+  <text x="120" y="220" fill="#fff0d7" font-family="Arial, sans-serif" font-size="34">Swap this for your own Mara, savannah, mountain, or safari image</text>
+</svg>

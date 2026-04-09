@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#d9e2f1"/>
+      <stop offset="45%" stop-color="#9db7d5"/>
+      <stop offset="100%" stop-color="#49607f"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#bg)"/>
+  <path d="M0 670C130 620 260 430 430 470s210 120 350 90 250-170 420-150 270 180 400 150V1000H0Z" fill="#5d7050"/>
+  <path d="M0 760C220 680 430 720 620 680s300-140 500-90 280 140 480 130V1000H0Z" fill="#7b905f"/>
+  <path d="M0 860C260 810 510 860 770 820s390-110 830-50V1000H0Z" fill="#b3925d"/>
+  <text x="120" y="150" fill="#f7fbff" font-family="Georgia, serif" font-size="82">Destination Placeholder</text>
+  <text x="120" y="220" fill="#eef6ff" font-family="Arial, sans-serif" font-size="34">Savannah and mountain style image for later replacement</text>
+</svg>

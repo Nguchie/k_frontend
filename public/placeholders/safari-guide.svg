@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000">
+  <rect width="1600" height="1000" fill="#f0dfbb"/>
+  <rect y="620" width="1600" height="380" fill="#c28b4a"/>
+  <path d="M0 760C240 700 480 720 710 670s330-120 520-90 250 130 370 110V1000H0Z" fill="#7e8b47"/>
+  <rect x="1120" y="340" width="16" height="260" fill="#5b472e"/>
+  <ellipse cx="1128" cy="290" rx="70" ry="100" fill="#5b472e"/>
+  <rect x="1080" y="500" width="22" height="170" fill="#5b472e"/>
+  <rect x="1155" y="500" width="22" height="170" fill="#5b472e"/>
+  <text x="120" y="150" fill="#5b3a24" font-family="Georgia, serif" font-size="82">Guide Placeholder</text>
+  <text x="120" y="220" fill="#6e5135" font-family="Arial, sans-serif" font-size="34">Use this until your safari guide artwork is uploaded</text>
+</svg>

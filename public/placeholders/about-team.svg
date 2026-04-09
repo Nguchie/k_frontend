@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1400">
+  <defs>
+    <linearGradient id="aboutBg" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#f2d9b0"/>
+      <stop offset="52%" stop-color="#c98a52"/>
+      <stop offset="100%" stop-color="#5a3a2b"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="1400" fill="url(#aboutBg)"/>
+  <rect y="980" width="1200" height="420" fill="#6d7f49"/>
+  <circle cx="600" cy="430" r="190" fill="#f0c38f"/>
+  <rect x="445" y="590" width="310" height="430" rx="120" fill="#f0c38f"/>
+  <path d="M370 980c40-150 170-250 320-250s280 100 320 250" fill="#3c2c22"/>
+  <path d="M430 420c20-160 140-250 270-250s250 90 270 250c-60-40-120-60-270-60s-210 20-270 60Z" fill="#2f241d"/>
+  <rect x="170" y="1120" width="860" height="160" rx="28" fill="rgba(255,248,237,.16)"/>
+  <text x="120" y="132" fill="#fff7ea" font-family="Georgia, serif" font-size="76">About Image Placeholder</text>
+  <text x="120" y="198" fill="#fff0da" font-family="Arial, sans-serif" font-size="30">Replace with founder, team, or guide portrait</text>
+</svg>

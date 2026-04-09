@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000">
+  <defs>
+    <linearGradient id="sky" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#f6d89a"/>
+      <stop offset="55%" stop-color="#e89b4a"/>
+      <stop offset="100%" stop-color="#7a4027"/>
+    </linearGradient>
+  </defs>
+  <rect width="1600" height="1000" fill="url(#sky)"/>
+  <rect y="620" width="1600" height="380" fill="#83512f"/>
+  <rect y="720" width="1600" height="280" fill="#5e7b3b"/>
+  <circle cx="1180" cy="220" r="90" fill="#ffd76f" opacity="0.9"/>
+  <path d="M0 700C250 620 450 660 700 620s500-120 900 10V1000H0Z" fill="#c69d59"/>
+  <path d="M820 470l90 180h-180Z" fill="#374725"/>
+  <path d="M1040 430l110 220H930Z" fill="#30401f"/>
+  <rect x="300" y="640" width="220" height="28" rx="14" fill="#2a2a2a"/>
+  <rect x="360" y="610" width="28" height="56" fill="#2a2a2a"/>
+  <rect x="445" y="610" width="28" height="56" fill="#2a2a2a"/>
+  <text x="120" y="150" fill="#fff8ec" font-family="Georgia, serif" font-size="82">Safari Placeholder</text>
+  <text x="120" y="220" fill="#fff2d8" font-family="Arial, sans-serif" font-size="34">Replace with your own East Africa tour image</text>
+</svg>
