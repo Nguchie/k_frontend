@@ -48,7 +48,7 @@ export default async function DestinationDetailPage({
   }
 
   const [allTours, allGuides] = await Promise.all([getAllTours(), getAllGuides()]);
-  const relatedTours = allTours.filter((tour) => tour.destination.slug === destination.slug);
+  const relatedTours = allTours.filter((tour) => getTourDestinations(tour).some((item) => item.slug === destination.slug));
   const relatedGuides = allGuides.filter((guide) => guide.destinations?.some((item) => item.slug === destination.slug));
   const name = destination.name_en;
   const summary = destination.summary_en;
@@ -71,7 +71,7 @@ export default async function DestinationDetailPage({
             items={[
               { label: "Home", href: "/" },
               { label: "Destinations", href: "/destinations" },
-              { label: destination.country.name },
+              { label: destination.country.name, href: `/countries/${destination.country.slug}` },
               { label: name },
             ]}
           />
@@ -148,7 +148,7 @@ export default async function DestinationDetailPage({
                 itemListElement: [
                   { "@type": "ListItem", position: 1, name: "Home", item: absoluteUrl("/") },
                   { "@type": "ListItem", position: 2, name: "Destinations", item: absoluteUrl("/destinations") },
-                  { "@type": "ListItem", position: 3, name: destination.country.name },
+                  { "@type": "ListItem", position: 3, name: destination.country.name, item: absoluteUrl(`/countries/${destination.country.slug}`) },
                   { "@type": "ListItem", position: 4, name, item: absoluteUrl(canonical) },
                 ],
               },
@@ -191,4 +191,9 @@ function renderParagraphs(value?: string) {
   return text.split(/\r?\n\r?\n+/).map((paragraph, index) => (
     <p key={index}>{paragraph.trim()}</p>
   ));
+}
+
+function getTourDestinations(tour: { destination: { id: number; slug: string }; destinations?: Array<{ id: number; slug: string }> }) {
+  const destinations = tour.destinations?.length ? tour.destinations : [tour.destination];
+  return destinations.filter((destination, index, items) => items.findIndex((item) => item.id === destination.id) === index);
 }

@@ -70,6 +70,10 @@ export type Country = {
   name: string;
   code: string;
   slug: string;
+  intro_en?: string;
+  seo_title_en?: string;
+  meta_description_en?: string;
+  canonical_url?: string;
 };
 
 export type GuideCategory = {
@@ -112,6 +116,7 @@ export type Destination = {
 export type Tour = {
   id: number;
   destination: Destination;
+  destinations?: Destination[];
   title_en: string;
   slug: string;
   summary_en: string;

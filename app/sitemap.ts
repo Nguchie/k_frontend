@@ -1,10 +1,11 @@
 import type { MetadataRoute } from "next";
 
-import { getAllDestinations, getAllGuides, getAllTours, getGuideCategories } from "@/lib/api";
+import { getAllCountries, getAllDestinations, getAllGuides, getAllTours, getGuideCategories } from "@/lib/api";
 import { absoluteUrl } from "@/lib/seo";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [destinations, tours, guides, guideCategories] = await Promise.all([
+  const [countries, destinations, tours, guides, guideCategories] = await Promise.all([
+    getAllCountries(),
     getAllDestinations(),
     getAllTours(),
     getAllGuides(),
@@ -13,6 +14,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const staticRoutes: MetadataRoute.Sitemap = [
     "/",
+    "/countries",
     "/tours",
     "/destinations",
     "/blog",
@@ -29,6 +31,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     url: absoluteUrl(destination.canonical_url || `/destinations/${destination.country.slug}/${destination.slug}`),
     changeFrequency: "weekly",
     priority: 0.85,
+  }));
+
+  const countryRoutes: MetadataRoute.Sitemap = countries.map((country) => ({
+    url: absoluteUrl(country.canonical_url || `/countries/${country.slug}`),
+    changeFrequency: "weekly",
+    priority: 0.82,
   }));
 
   const tourRoutes: MetadataRoute.Sitemap = tours.map((tour) => ({
@@ -51,5 +59,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  return [...staticRoutes, ...destinationRoutes, ...tourRoutes, ...guideRoutes, ...guideCategoryRoutes];
+  return [...staticRoutes, ...countryRoutes, ...destinationRoutes, ...tourRoutes, ...guideRoutes, ...guideCategoryRoutes];
 }

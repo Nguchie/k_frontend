@@ -11,7 +11,7 @@ import { SectionHeading } from "@/components/SectionHeading";
 import { TourCard } from "@/components/TourCard";
 import { TrustBar } from "@/components/TrustBar";
 import { dictionaries } from "@/lib/copy";
-import { getHomepageData } from "@/lib/api";
+import { getAllCountries, getHomepageData } from "@/lib/api";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
@@ -22,7 +22,7 @@ export const metadata: Metadata = buildMetadata({
 
 export default async function RootPage() {
   const copy = dictionaries.en;
-  const data = await getHomepageData();
+  const [data, countries] = await Promise.all([getHomepageData(), getAllCountries()]);
 
   return (
     <>
@@ -65,6 +65,21 @@ export default async function RootPage() {
               <p>Featured safari departures will appear here once they are published from the admin panel.</p>
             </div>
           )}
+        </div>
+      </section>
+      <section className="section-band mist">
+        <div className="page-section">
+          <SectionHeading
+            title="Explore Countries"
+            body="Start with the country you want to visit, then compare its destinations, tours, and planning guides."
+          />
+          <div className="button-row">
+            {countries.map((country) => (
+              <Link key={country.slug} href={`/countries/${country.slug}`} className="button secondary">
+                {country.name}
+              </Link>
+            ))}
+          </div>
         </div>
       </section>
       <section className="section-band mist">

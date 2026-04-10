@@ -1,6 +1,6 @@
 import { cache } from "react";
 
-import { Destination, Guide, GuideCategory, HomepageFAQ, HomepageHeroSlide, InquiryPayload, Review, Tour } from "@/lib/types";
+import { Country, Destination, Guide, GuideCategory, HomepageFAQ, HomepageHeroSlide, InquiryPayload, Review, Tour } from "@/lib/types";
 import { getApiBaseUrl } from "@/lib/backend";
 
 async function fetchJson<T>(path: string): Promise<T> {
@@ -116,6 +116,15 @@ export async function getAllDestinations() {
     return response.results;
   } catch {
     return [] as Destination[];
+  }
+}
+
+export async function getAllCountries() {
+  try {
+    const response = await fetchJson<{ results: Country[] }>("/countries/");
+    return response.results;
+  } catch {
+    return [] as Country[];
   }
 }
 

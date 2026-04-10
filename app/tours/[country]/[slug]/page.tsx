@@ -51,8 +51,12 @@ export default async function TourDetailPage({
   }
 
   const [allTours, allGuides] = await Promise.all([getAllTours(), getAllGuides()]);
-  const relatedTours = allTours.filter((item) => item.destination.slug === tour.destination.slug && item.slug !== tour.slug);
-  const relatedGuides = allGuides.filter((guide) => guide.tours?.some((item) => item.slug === tour.slug || item.destination.slug === tour.destination.slug));
+  const currentDestinationIds = new Set(getTourDestinations(tour).map((item) => item.id));
+  const relatedTours = allTours.filter((item) => item.slug !== tour.slug && getTourDestinations(item).some((destination) => currentDestinationIds.has(destination.id)));
+  const relatedGuides = allGuides.filter((guide) =>
+    Boolean(guide.tours?.some((item) => item.slug === tour.slug || getTourDestinations(item).some((destination) => currentDestinationIds.has(destination.id))))
+    || Boolean(guide.destinations?.some((destination) => currentDestinationIds.has(destination.id))),
+  );
   const dateOptions = (tour.available_dates || []).map((item) => ({
     value: `${item.start_date} to ${item.end_date}`,
     label: `${item.label} - ${item.start_date} to ${item.end_date}`,
@@ -78,7 +82,7 @@ export default async function TourDetailPage({
               items={[
                 { label: "Home", href: "/" },
                 { label: "Tours", href: "/tours" },
-                { label: tour.destination.country.name },
+                { label: tour.destination.country.name, href: `/countries/${tour.destination.country.slug}` },
                 { label: tour.destination.name_en, href: `/destinations/${tour.destination.country.slug}/${tour.destination.slug}` },
                 { label: tour.title_en },
               ]}
@@ -201,4 +205,9 @@ export default async function TourDetailPage({
       </div>
     </div>
   );
+}
+
+function getTourDestinations(tour: { destination: { id: number }; destinations?: Array<{ id: number }> }) {
+  const destinations = tour.destinations?.length ? tour.destinations : [tour.destination];
+  return destinations.filter((destination, index, items) => items.findIndex((item) => item.id === destination.id) === index);
 }

@@ -45,6 +45,7 @@ export function SiteHeader({ brand }: SiteHeaderProps) {
       </div>
       <div className={`header-nav-shell ${isMenuOpen ? "is-open" : ""}`}>
         <nav id="site-navigation" className="main-nav">
+          <Link href="/countries" onClick={() => setIsMenuOpen(false)}>Countries</Link>
           <Link href="/destinations" onClick={() => setIsMenuOpen(false)}>Destinations</Link>
           <Link href="/tours" onClick={() => setIsMenuOpen(false)}>Tours</Link>
           <Link href="/blog" onClick={() => setIsMenuOpen(false)}>Safari Guides</Link>

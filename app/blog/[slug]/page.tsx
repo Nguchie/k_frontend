@@ -69,6 +69,13 @@ export default async function GuideDetailPage({
     });
   }
 
+  if (guide.country?.slug) {
+    breadcrumbItems.push({
+      label: guide.country.name,
+      href: `/countries/${guide.country.slug}`,
+    });
+  }
+
   breadcrumbItems.push({ label: title });
 
   return (

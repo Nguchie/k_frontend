@@ -18,7 +18,7 @@ export default async function ReviewsPage() {
   const [reviews, tours] = await Promise.all([getReviews(), getAllTours()]);
   const tourOptions = tours.map((tour) => ({
     id: tour.id,
-    title: `${tour.title_en} - ${tour.destination.name_en}`,
+    title: `${tour.title_en} - ${(tour.destinations?.length ? tour.destinations : [tour.destination]).map((destination) => destination.name_en).join(" / ")}`,
     destinationId: tour.destination.id,
   }));
   const avgRating = reviews.length ? reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length : 0;

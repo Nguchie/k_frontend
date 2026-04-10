@@ -24,7 +24,10 @@ export default async function ToursPage({
   const duration = typeof filters.duration === "string" ? Number(filters.duration) : 0;
 
   const tours = allTours.filter((tour) => {
-    const matchesQuery = !q || [tour.title_en, tour.destination.name_en, tour.destination.country.name].join(" ").toLowerCase().includes(q);
+    const destinationSearch = (tour.destinations?.length ? tour.destinations : [tour.destination])
+      .map((destination) => `${destination.name_en} ${destination.country.name}`)
+      .join(" ");
+    const matchesQuery = !q || [tour.title_en, destinationSearch].join(" ").toLowerCase().includes(q);
     const matchesBudget = !budget || tour.budget_level === budget;
     const matchesDuration = !duration || tour.duration_days === duration;
     return matchesQuery && matchesBudget && matchesDuration;
