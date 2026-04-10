@@ -26,7 +26,7 @@ export function SiteHeader({ brand }: SiteHeaderProps) {
       <div className="header-top-row">
         <Link href="/" className="brand">
           <img src="/kennice_logo.jpeg" alt={`${brand} logo`} className="brand-logo" />
-          {brand}
+          {brand.toUpperCase()}
         </Link>
         <button
           type="button"
