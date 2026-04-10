@@ -440,6 +440,10 @@ img {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+.country-destination-grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
 .card,
 .review-card,
 .trust-bar,
@@ -739,6 +743,10 @@ img {
   grid-template-columns: minmax(0, 1.7fr) minmax(320px, 0.8fr);
   gap: 24px;
   padding: 40px 0 80px;
+}
+
+.country-detail-shell {
+  grid-template-columns: minmax(0, 1fr);
 }
 
 .detail-content {

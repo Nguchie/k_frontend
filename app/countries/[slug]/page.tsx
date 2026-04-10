@@ -63,7 +63,7 @@ export default async function CountryDetailPage({
   const countryImageSrc = getImageSource(country.image);
 
   return (
-    <div className="detail-shell">
+    <div className="detail-shell country-detail-shell">
       <div className="detail-content">
         <section className="detail-hero">
           <Breadcrumbs
@@ -92,7 +92,7 @@ export default async function CountryDetailPage({
 
         <section className="detail-block">
           <SectionHeading title={`Destinations in ${country.name}`} body={`Wildlife areas, parks, and travel regions to explore across ${country.name}.`} />
-          <div className="grid cards-3">
+          <div className="grid country-destination-grid">
             {destinations.map((destination) => (
               <DestinationCard key={destination.id} destination={destination} />
             ))}
