@@ -71,6 +71,7 @@ export type Country = {
   code: string;
   slug: string;
   intro_en?: string;
+  image?: ImageAsset | null;
   seo_title_en?: string;
   meta_description_en?: string;
   canonical_url?: string;

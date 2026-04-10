@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { SearchPanel } from "@/components/SearchPanel";
 import { SectionHeading } from "@/components/SectionHeading";
 import { TourCard } from "@/components/TourCard";
@@ -22,23 +23,29 @@ export default async function ToursPage({
   const q = typeof filters.q === "string" ? filters.q.toLowerCase() : "";
   const budget = typeof filters.budget === "string" ? filters.budget : "";
   const duration = typeof filters.duration === "string" ? Number(filters.duration) : 0;
+  const country = typeof filters.country === "string" ? filters.country : "";
 
   const tours = allTours.filter((tour) => {
-    const destinationSearch = (tour.destinations?.length ? tour.destinations : [tour.destination])
-      .map((destination) => `${destination.name_en} ${destination.country.name}`)
-      .join(" ");
+    const destinations = tour.destinations?.length ? tour.destinations : [tour.destination];
+    const destinationSearch = destinations.map((destination) => `${destination.name_en} ${destination.country.name}`).join(" ");
     const matchesQuery = !q || [tour.title_en, destinationSearch].join(" ").toLowerCase().includes(q);
     const matchesBudget = !budget || tour.budget_level === budget;
     const matchesDuration = !duration || tour.duration_days === duration;
-    return matchesQuery && matchesBudget && matchesDuration;
+    const matchesCountry = !country || destinations.some((destination) => destination.country.slug === country);
+    return matchesQuery && matchesBudget && matchesDuration && matchesCountry;
   });
+  const countryName = country ? tours[0]?.destination.country.slug === country
+    ? tours[0].destination.country.name
+    : (allTours.flatMap((tour) => (tour.destinations?.length ? tour.destinations : [tour.destination])).find((destination) => destination.country.slug === country)?.country.name || "")
+    : "";
 
   return (
     <div className="archive-shell">
       <div className="archive-hero">
+        <Breadcrumbs items={[{ label: "Home", href: "/" }, ...(country ? [{ label: "Countries", href: "/countries" }, { label: countryName || country }] : []), { label: "Tours" }]} />
         <SectionHeading
-          title="Safari Tours"
-          body="Browse East Africa safari tours by destination, budget, duration, and travel style."
+          title={countryName ? `${countryName} Tours` : "Safari Tours"}
+          body={countryName ? `Browse safari tours connected to ${countryName}.` : "Browse East Africa safari tours by destination, budget, duration, and travel style."}
           level="h1"
         />
         <SearchPanel compact />

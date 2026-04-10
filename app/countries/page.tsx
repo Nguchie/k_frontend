@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { SectionHeading } from "@/components/SectionHeading";
 import { getAllCountries, getAllDestinations, getAllGuides, getAllTours } from "@/lib/api";
+import { getImageSource } from "@/lib/media";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
@@ -43,6 +44,11 @@ export default async function CountriesPage() {
 
           return (
             <Link key={country.slug} href={`/countries/${country.slug}`} className="card card-link destination-card">
+              {getImageSource(country.image) ? (
+                <div className="card-image">
+                  <img src={getImageSource(country.image) || ""} alt={country.image?.alt_text_en ?? country.name} />
+                </div>
+              ) : null}
               <div className="card-copy">
                 <span className="pill">{country.code}</span>
                 <h3>{country.name}</h3>
