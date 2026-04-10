@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
+import { getBackendInternalUrl } from "@/lib/backend";
 
-const BACKEND_INTERNAL_URL = (process.env.BACKEND_INTERNAL_URL || process.env.NEXT_PUBLIC_API_BASE_URL || "").replace(/\/api\/?$/, "");
+const BACKEND_INTERNAL_URL = getBackendInternalUrl();
 
 function getTargetUrl(request: NextRequest, path: string[]) {
   if (!BACKEND_INTERNAL_URL) {

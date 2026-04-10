@@ -88,7 +88,7 @@ export default async function GuideDetailPage({
         ) : null}
         <section className="detail-block">
           <SectionHeading title="Guide" />
-          <p>{body}</p>
+          {renderParagraphs(body)}
         </section>
         {guide.destinations?.length ? (
           <section className="detail-block">
@@ -160,4 +160,15 @@ export default async function GuideDetailPage({
       </aside>
     </div>
   );
+}
+
+function renderParagraphs(value?: string) {
+  const text = value?.trim();
+  if (!text) {
+    return null;
+  }
+
+  return text.split(/\r?\n\r?\n+/).map((paragraph, index) => (
+    <p key={index}>{paragraph.trim()}</p>
+  ));
 }

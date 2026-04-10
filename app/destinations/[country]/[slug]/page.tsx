@@ -87,15 +87,15 @@ export default async function DestinationDetailPage({
         </section>
         <section className="detail-block">
           <SectionHeading title="Wildlife and highlights" />
-          <p>{destination.wildlife_en}</p>
+          {renderParagraphs(destination.wildlife_en)}
         </section>
         <section className="detail-block">
           <SectionHeading title="Best time to visit" />
-          <p>{destination.best_time_en}</p>
+          {renderParagraphs(destination.best_time_en)}
         </section>
         <section className="detail-block">
           <SectionHeading title="Travel tips" />
-          <p>{destination.travel_tips_en}</p>
+          {renderParagraphs(destination.travel_tips_en)}
         </section>
         <section className="detail-block">
           <SectionHeading title="Recommended tours" body="Tour ideas that pair well with this destination." />
@@ -180,4 +180,15 @@ export default async function DestinationDetailPage({
       </aside>
     </div>
   );
+}
+
+function renderParagraphs(value?: string) {
+  const text = value?.trim();
+  if (!text) {
+    return null;
+  }
+
+  return text.split(/\r?\n\r?\n+/).map((paragraph, index) => (
+    <p key={index}>{paragraph.trim()}</p>
+  ));
 }

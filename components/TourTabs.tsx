@@ -85,7 +85,7 @@ export function TourTabs({ tour }: TourTabsProps) {
                 {item.stay ? <span className="pill">{item.stay}</span> : null}
                 {item.meals.length ? <span className="pill">{item.meals.join(" | ")}</span> : null}
               </div>
-              {item.body ? <p>{item.body}</p> : null}
+              {renderRichText(item.body)}
               <div className="tour-day-grid">
                 <TimelineBlock title="Breakfast" items={item.breakfast} />
                 <TimelineBlock title="Morning" items={item.morning} />
@@ -226,7 +226,7 @@ function TimelineBlock({ title, items }: { title: string; items?: Array<{ title:
       {cleanItems.map((item, index) => (
         <div key={`${title}-${item.title || index}`} className="tour-timeline-item">
           {item.title ? <strong>{item.title}</strong> : null}
-          {item.body ? <p>{item.body}</p> : null}
+          {renderRichText(item.body)}
         </div>
       ))}
     </div>
@@ -235,7 +235,13 @@ function TimelineBlock({ title, items }: { title: string; items?: Array<{ title:
 
 function renderRichText(value: unknown) {
   const text = safeText(value);
-  return text ? <p>{text}</p> : null;
+  if (!text) {
+    return null;
+  }
+
+  return text.split(/\r?\n\r?\n+/).map((paragraph, index) => (
+    <p key={index}>{paragraph.trim()}</p>
+  ));
 }
 
 function toDisplayText(value: unknown): string {
