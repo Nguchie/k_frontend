@@ -10,6 +10,7 @@ import { HomepageHeroSlide } from "@/lib/types";
 
 const fallbackSlides = [
   {
+    id: -1,
     eyebrow_en: "Migration windows",
     title_en: "East Africa safaris shaped around the right season.",
     subtitle_en: "Explore wildlife-rich journeys across the Mara, Serengeti, Amboseli, and more with clear dates and pricing.",
@@ -17,6 +18,7 @@ const fallbackSlides = [
     position: 1,
   },
   {
+    id: -2,
     eyebrow_en: "Big five moments",
     title_en: "See the savannah, mountains, and signature game-viewing routes.",
     subtitle_en: "From migration plains to gorilla forests, every tour is built around a clear travel experience.",
@@ -24,6 +26,7 @@ const fallbackSlides = [
     position: 2,
   },
   {
+    id: -3,
     eyebrow_en: "Explore Kenya with Kennice Tours",
     title_en: "Enjoy every destination",
     subtitle_en: "Affordable safaris, group trips & customised travel experiences across Kenya.",
@@ -37,35 +40,18 @@ function getSlideImage(slide: HomepageHeroSlide | (typeof fallbackSlides)[number
 }
 
 export function HeroSection({ slides = [] }: { slides?: HomepageHeroSlide[] }) {
-  const heroSlides = fallbackSlides.map((fallbackSlide, index) => {
-    const slide = slides[index];
-
-    if (!slide) {
-      return fallbackSlide;
-    }
-
-    const mergedSlide = {
-      ...fallbackSlide,
+  const heroSlides = slides.length
+    ? slides.map((slide, index) => ({
       ...slide,
-      image: slide.image ?? fallbackSlide.image,
-    };
-
-    if (index === 2) {
-      return {
-        ...mergedSlide,
-        eyebrow_en: fallbackSlide.eyebrow_en,
-        title_en: fallbackSlide.title_en,
-        subtitle_en: fallbackSlide.subtitle_en,
-      };
-    }
-
-    return mergedSlide;
-  });
+      image: slide.image ?? fallbackSlides[index % fallbackSlides.length].image,
+      position: slide.position || index + 1,
+    }))
+    : fallbackSlides;
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [hoveredSide, setHoveredSide] = useState<"left" | "right" | null>(null);
 
-  heroSlides.slice(0, 3).forEach((slide) => {
+  heroSlides.forEach((slide) => {
     preload(getSlideImage(slide, slide.position - 1), { as: "image" });
   });
 
@@ -82,7 +68,7 @@ export function HeroSection({ slides = [] }: { slides?: HomepageHeroSlide[] }) {
   }, [heroSlides.length, isPaused]);
 
   useEffect(() => {
-    heroSlides.slice(0, 3).forEach((slide, index) => {
+    heroSlides.forEach((slide, index) => {
       const image = new window.Image();
       image.src = getSlideImage(slide, index);
       void image.decode?.().catch(() => undefined);

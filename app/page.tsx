@@ -12,6 +12,7 @@ import { TourCard } from "@/components/TourCard";
 import { TrustBar } from "@/components/TrustBar";
 import { dictionaries } from "@/lib/copy";
 import { getAllCountries, getHomepageData } from "@/lib/api";
+import { getImageSource } from "@/lib/media";
 import { buildMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildMetadata({
@@ -73,10 +74,24 @@ export default async function RootPage() {
             title="Explore Countries"
             body="Start with the country you want to visit, then compare its destinations, tours, and planning guides."
           />
-          <div className="button-row">
+          <div className="grid cards-3">
             {countries.map((country) => (
-              <Link key={country.slug} href={`/countries/${country.slug}`} className="button secondary">
-                {country.name}
+              <Link key={country.slug} href={`/countries/${country.slug}`} className="card card-link destination-card">
+                {getImageSource(country.image) ? (
+                  <div className="card-image">
+                    <img src={getImageSource(country.image) || ""} alt={country.image?.alt_text_en ?? country.name} />
+                  </div>
+                ) : null}
+                <div className="card-copy">
+                  <span className="pill">{country.code}</span>
+                  <h3>{country.name}</h3>
+                  <p className="card-summary">
+                    {country.intro_en?.slice(0, 170).trim() || `Explore safari destinations, tours, and planning guides across ${country.name}.`}
+                  </p>
+                  <div className="card-footer">
+                    <span className="text-link">Explore country</span>
+                  </div>
+                </div>
               </Link>
             ))}
           </div>
