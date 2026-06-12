@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { BlogSidebar } from "@/components/BlogSidebar";
 import { BookingForm } from "@/components/BookingForm";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { FAQSection } from "@/components/FAQSection";
 import { JsonLd } from "@/components/JsonLd";
 import { SectionHeading } from "@/components/SectionHeading";
 import { TourCard } from "@/components/TourCard";
@@ -117,6 +118,12 @@ export default async function GuideDetailPage({
                 <TourCard key={tour.id} tour={tour} compact />
               ))}
             </div>
+          </section>
+        ) : null}
+        {guide.faqs?.length ? (
+          <section className="detail-block">
+            <SectionHeading title="Frequently asked questions" />
+            <FAQSection faqs={guide.faqs} />
           </section>
         ) : null}
         <JsonLd

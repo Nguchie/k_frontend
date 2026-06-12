@@ -1930,6 +1930,65 @@ img {
   left: 18px;
 }
 
+.faq-section {
+  display: grid;
+  gap: 10px;
+}
+
+.faq-item {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  overflow: hidden;
+  background: rgba(255, 250, 244, 0.92);
+  transition: box-shadow 200ms ease;
+}
+
+.faq-item.is-open {
+  box-shadow: 0 4px 20px rgba(35, 33, 25, 0.06);
+}
+
+.faq-question {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  width: 100%;
+  padding: 18px 20px;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  font-weight: 700;
+  font-size: 1rem;
+  text-align: left;
+  color: var(--charcoal);
+  cursor: pointer;
+  transition: background 160ms ease;
+}
+
+.faq-question:hover {
+  background: rgba(112, 83, 58, 0.04);
+}
+
+.faq-icon {
+  flex-shrink: 0;
+  font-size: 1.3rem;
+  line-height: 1;
+  color: var(--sunset-red);
+  font-weight: 700;
+  width: 24px;
+  text-align: center;
+}
+
+.faq-answer {
+  padding: 0 20px 18px;
+}
+
+.faq-answer p {
+  margin: 0;
+  line-height: 1.7;
+  color: rgba(43, 43, 43, 0.82);
+}
+
 @media (max-width: 980px) {
   .tour-hero-shell,
   .tour-key-stats,

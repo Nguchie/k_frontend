@@ -160,6 +160,7 @@ export type Guide = {
   country?: Country | null;
   destinations?: Destination[];
   tours?: Tour[];
+  faqs?: FAQ[];
   seo_title_en?: string;
   meta_description_en?: string;
   canonical_url?: string;
