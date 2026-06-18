@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 
+import { getImageSource } from "@/lib/media";
 import type { FAQ } from "@/lib/types";
 
 type FAQSectionProps = {
@@ -30,6 +31,20 @@ export function FAQSection({ faqs }: FAQSectionProps) {
             </button>
             <div className="faq-answer" hidden={!isOpen}>
               <p>{faq.answer_en}</p>
+              {faq.images?.length ? (
+                <div className="faq-answer-images" aria-label="FAQ answer images">
+                  {faq.images.map((image) => {
+                    const imageSource = getImageSource(image);
+                    if (!imageSource) return null;
+                    return (
+                      <figure key={image.id} className="faq-answer-image">
+                        <img src={imageSource} alt={image.alt_text_en || image.title} />
+                        {image.caption_en ? <figcaption>{image.caption_en}</figcaption> : null}
+                      </figure>
+                    );
+                  })}
+                </div>
+              ) : null}
             </div>
           </div>
         );

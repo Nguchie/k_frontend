@@ -186,6 +186,35 @@ export type Review = {
 export type FAQ = {
   question_en: string;
   answer_en: string;
+  images?: ImageAsset[];
+  resolved_link?: GeneralFAQResolvedLink;
+};
+
+export type FAQCategory = {
+  id: number;
+  name: string;
+  slug: string;
+  description?: string;
+  sort_order: number;
+};
+
+export type GeneralFAQResolvedLink = {
+  type: "none" | "tour" | "destination" | "guide" | "filtered_tours";
+  url?: string;
+  label?: string;
+};
+
+export type GeneralFAQ = {
+  id: number;
+  question_en: string;
+  answer_en: string;
+  category: FAQCategory;
+  countries: Country[];
+  images?: ImageAsset[];
+  sort_order: number;
+  featured: boolean;
+  link_type: GeneralFAQResolvedLink["type"];
+  resolved_link: GeneralFAQResolvedLink;
 };
 
 export type HomepageFAQ = {

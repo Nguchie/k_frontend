@@ -1,6 +1,6 @@
 import { cache } from "react";
 
-import { Country, Destination, Guide, GuideCategory, HomepageFAQ, HomepageHeroSlide, InquiryPayload, Review, Tour } from "@/lib/types";
+import { Country, Destination, FAQCategory, GeneralFAQ, Guide, GuideCategory, HomepageFAQ, HomepageHeroSlide, InquiryPayload, Review, Tour } from "@/lib/types";
 import { getApiBaseUrl } from "@/lib/backend";
 
 async function fetchJson<T>(path: string): Promise<T> {
@@ -151,6 +151,24 @@ export async function getGuideCategories() {
     return await fetchJson<GuideCategory[]>("/guide-categories/");
   } catch {
     return [] as GuideCategory[];
+  }
+}
+
+export async function getFAQCategories() {
+  try {
+    return await fetchJson<FAQCategory[]>("/faq-categories/");
+  } catch {
+    return [] as FAQCategory[];
+  }
+}
+
+export async function getGeneralFAQs(params?: URLSearchParams) {
+  try {
+    const query = params?.toString();
+    const response = await fetchJson<GeneralFAQ[] | { results: GeneralFAQ[] }>(`/general-faqs/${query ? `?${query}` : ""}`);
+    return Array.isArray(response) ? response : response.results;
+  } catch {
+    return [] as GeneralFAQ[];
   }
 }
 

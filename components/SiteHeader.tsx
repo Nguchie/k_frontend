@@ -49,6 +49,7 @@ export function SiteHeader({ brand }: SiteHeaderProps) {
           <Link href="/destinations" onClick={() => setIsMenuOpen(false)}>Destinations</Link>
           <Link href="/tours" onClick={() => setIsMenuOpen(false)}>Tours</Link>
           <Link href="/blog" onClick={() => setIsMenuOpen(false)}>Safari Guides</Link>
+          <Link href="/faqs" onClick={() => setIsMenuOpen(false)}>FAQs</Link>
           <Link href="/reviews" onClick={() => setIsMenuOpen(false)}>Reviews</Link>
           <Link href="/about" onClick={() => setIsMenuOpen(false)}>About</Link>
           <div className="nav-utility-group">

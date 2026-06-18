@@ -62,6 +62,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
                     <li><Link href="/destinations">Destinations</Link></li>
                     <li><Link href="/tours">Tours</Link></li>
                     <li><Link href="/blog">Safari Guides</Link></li>
+                    <li><Link href="/faqs">Safari FAQs</Link></li>
                     <li><Link href="/reviews">Reviews</Link></li>
                     <li><Link href="/about">About Us</Link></li>
                     <li><Link href="/contact">Have a Question?</Link></li>
