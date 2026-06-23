@@ -1963,6 +1963,7 @@ img {
   color: var(--charcoal);
   cursor: pointer;
   transition: background 160ms ease;
+  overflow-wrap: anywhere;
 }
 
 .faq-question:hover {
@@ -2148,6 +2149,7 @@ img {
   background: var(--deep-green);
   color: var(--white);
   font-weight: 700;
+  text-align: center;
 }
 
 .general-faq-cta {
@@ -2183,6 +2185,10 @@ img {
     position: static;
   }
 
+  .general-faq-category-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .tour-date-card {
     flex-direction: column;
     align-items: flex-start;
@@ -2206,5 +2212,99 @@ img {
     width: 46px;
     height: 46px;
     margin: 0 10px;
+  }
+}
+
+@media (max-width: 720px) {
+  .general-faq-page {
+    gap: 20px;
+  }
+
+  .general-faq-layout {
+    gap: 18px;
+  }
+
+  .general-faq-controls,
+  .general-faq-results,
+  .general-faq-cta,
+  .empty-state {
+    border-radius: 18px;
+  }
+
+  .general-faq-controls,
+  .general-faq-results {
+    padding: 16px;
+  }
+
+  .general-faq-category {
+    min-height: 76px;
+    padding: 12px;
+  }
+
+  .general-faq-category span {
+    font-size: 0.86rem;
+  }
+
+  .general-faq-country-row {
+    flex-wrap: nowrap;
+    margin: 0 -16px;
+    padding: 0 16px 2px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .general-faq-country-row::-webkit-scrollbar {
+    display: none;
+  }
+
+  .filter-chip {
+    flex: 0 0 auto;
+  }
+
+  .general-faq-results-header,
+  .general-faq-cta {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .general-faq-results-header .text-link,
+  .general-faq-cta .primary-link,
+  .empty-state .primary-link {
+    width: 100%;
+  }
+
+  .faq-question {
+    align-items: flex-start;
+    padding: 16px;
+  }
+
+  .faq-answer {
+    padding: 0 16px 16px;
+  }
+
+  .faq-answer-images {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .general-faq-category-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .general-faq-category {
+    min-height: 0;
+  }
+
+  .general-faq-category span {
+    display: none;
+  }
+
+  .faq-answer-images {
+    grid-template-columns: 1fr;
+  }
+
+  .faq-related-link {
+    width: 100%;
   }
 }
