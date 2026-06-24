@@ -1992,7 +1992,7 @@ img {
 
 .faq-answer-images {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(120px, 150px));
   gap: 12px;
   margin-top: 16px;
 }
@@ -2005,8 +2005,22 @@ img {
   background: var(--white);
 }
 
+.faq-answer-image-button {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: zoom-in;
+}
+
 .faq-answer-image img {
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 1 / 1;
+  transition: transform 180ms ease;
+}
+
+.faq-answer-image-button:hover img {
+  transform: scale(1.03);
 }
 
 .faq-answer-image figcaption {
@@ -2014,6 +2028,55 @@ img {
   color: rgba(43, 43, 43, 0.72);
   font-size: 0.9rem;
   line-height: 1.45;
+}
+
+.faq-image-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(20, 18, 14, 0.72);
+}
+
+.faq-image-lightbox-panel {
+  position: relative;
+  display: grid;
+  gap: 12px;
+  width: min(920px, 100%);
+  max-height: min(760px, calc(100vh - 48px));
+  padding: 14px;
+  overflow: auto;
+  border-radius: 20px;
+  background: var(--white);
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.28);
+}
+
+.faq-image-lightbox-panel img {
+  width: 100%;
+  max-height: calc(100vh - 170px);
+  object-fit: contain;
+  border-radius: 14px;
+  background: var(--sand);
+}
+
+.faq-image-lightbox-panel p {
+  margin: 0;
+  color: rgba(43, 43, 43, 0.76);
+  line-height: 1.5;
+}
+
+.faq-image-lightbox-close {
+  justify-self: end;
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--white);
+  color: var(--charcoal);
+  font: inherit;
+  font-weight: 700;
 }
 
 .general-faq-page {
@@ -2283,7 +2346,7 @@ img {
   }
 
   .faq-answer-images {
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
   }
 }
 
@@ -2301,10 +2364,19 @@ img {
   }
 
   .faq-answer-images {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .faq-related-link {
     width: 100%;
+  }
+
+  .faq-image-lightbox {
+    padding: 12px;
+  }
+
+  .faq-image-lightbox-panel {
+    max-height: calc(100vh - 24px);
+    border-radius: 16px;
   }
 }

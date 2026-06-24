@@ -11,6 +11,7 @@ type FAQSectionProps = {
 
 export function FAQSection({ faqs }: FAQSectionProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [activeImage, setActiveImage] = useState<{ src: string; alt: string; caption?: string } | null>(null);
 
   if (!faqs.length) return null;
 
@@ -38,7 +39,13 @@ export function FAQSection({ faqs }: FAQSectionProps) {
                     if (!imageSource) return null;
                     return (
                       <figure key={image.id} className="faq-answer-image">
-                        <img src={imageSource} alt={image.alt_text_en || image.title} />
+                        <button
+                          type="button"
+                          className="faq-answer-image-button"
+                          onClick={() => setActiveImage({ src: imageSource, alt: image.alt_text_en || image.title, caption: image.caption_en })}
+                        >
+                          <img src={imageSource} alt={image.alt_text_en || image.title} />
+                        </button>
                         {image.caption_en ? <figcaption>{image.caption_en}</figcaption> : null}
                       </figure>
                     );
@@ -49,6 +56,17 @@ export function FAQSection({ faqs }: FAQSectionProps) {
           </div>
         );
       })}
+      {activeImage ? (
+        <div className="faq-image-lightbox" role="dialog" aria-modal="true" aria-label="Expanded FAQ image" onClick={() => setActiveImage(null)}>
+          <div className="faq-image-lightbox-panel" onClick={(event) => event.stopPropagation()}>
+            <button type="button" className="faq-image-lightbox-close" onClick={() => setActiveImage(null)} aria-label="Close image">
+              Close
+            </button>
+            <img src={activeImage.src} alt={activeImage.alt} />
+            {activeImage.caption ? <p>{activeImage.caption}</p> : null}
+          </div>
+        </div>
+      ) : null}
     </div>
   );
 }
