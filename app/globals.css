@@ -1622,6 +1622,11 @@ img {
   margin: 0 auto;
 }
 
+.about-section-centered .about-mission-vision-grid {
+  max-width: none;
+  text-align: left;
+}
+
 .about-commitment-list {
   margin: 0;
   padding: 0 0 0 18px;
@@ -1655,7 +1660,8 @@ img {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 24px;
-  align-items: start;
+  align-items: stretch;
+  width: 100%;
 }
 
 .about-mission-vision-grid .about-section-heading {
@@ -1663,12 +1669,22 @@ img {
   border: 1px solid var(--border);
   border-radius: 28px;
   box-shadow: var(--shadow);
-  padding: 30px;
+  padding: 36px 32px;
+  display: grid;
+  gap: 14px;
+  max-width: none;
+  margin: 0;
+  text-align: left;
+}
+
+.about-mission-vision-grid .about-section-heading h2 {
+  font-size: clamp(1.5rem, 3vw, 2rem);
 }
 
 .about-mission-vision-grid .about-section-heading p:last-child {
   line-height: 1.8;
   color: rgba(43, 43, 43, 0.82);
+  margin: 0;
 }
 
 .about-values-grid {

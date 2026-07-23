@@ -105,7 +105,7 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <section className="about-section">
+      <section className="about-section about-section-centered">
         <div className="about-mission-vision-grid">
           <div className="about-section-heading">
             <p className="eyebrow">Our Mission</p>
