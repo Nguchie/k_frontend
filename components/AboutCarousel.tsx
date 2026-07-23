@@ -4,18 +4,18 @@ import { useEffect, useState } from "react";
 
 const slides = [
   {
-    title: "Safari planning across East Africa",
-    body: "Thoughtful journeys through Kenya, Uganda, Tanzania, Rwanda, and Zanzibar with wildlife, landscapes, culture, and coastlines at the center.",
+    title: "Enjoy Every Destination",
+    body: "Exceptional travel experiences across East Africa with personalized service, innovative solutions and a commitment to quality, safety and customer satisfaction.",
     image: "/hero/about1.jpg",
   },
   {
-    title: "From savannah plains to mountain horizons",
-    body: "A visual introduction to the kind of journeys Kennice Venture helps travelers plan across the region.",
+    title: "Your trusted travel partner in East Africa",
+    body: "Expertly planned safaris, beach holidays, corporate travel, family vacations, and customized tour packages across Kenya, Uganda, Tanzania, Rwanda, and Zanzibar.",
     image: "/hero/about2.jpg",
   },
   {
-    title: "Travel shaped around experience, not guesswork",
-    body: "Routes, timing, and support built around real East Africa travel knowledge.",
+    title: "Memorable journeys that inspire exploration",
+    body: "We create unforgettable travel experiences that connect people with the beauty, culture and heritage of every destination while promoting responsible tourism.",
     image: "/hero/about3.jpg",
   },
 ];
