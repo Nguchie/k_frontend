@@ -86,6 +86,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
                     <li><Link href="/contact">Have a Question?</Link></li>
                     <li><a href={siteConfig.whatsappUrl} target="_blank" rel="noreferrer">WhatsApp</a></li>
                     <li><a href={siteConfig.facebookUrl} target="_blank" rel="noreferrer">Facebook</a></li>
+                    <li><a href={siteConfig.linkedinUrl} target="_blank" rel="noreferrer">LinkedIn</a></li>
                     <li><a href={siteConfig.youtubeUrl} target="_blank" rel="noreferrer">YouTube</a></li>
                   </ul>
                 </div>

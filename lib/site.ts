@@ -5,5 +5,6 @@ export const siteConfig = {
   contactEmail: process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "kenniceventures@gmail.com",
   facebookUrl: process.env.NEXT_PUBLIC_FACEBOOK_URL ?? "https://www.facebook.com/kennicetoursltd/",
   youtubeUrl: process.env.NEXT_PUBLIC_YOUTUBE_URL ?? "https://www.youtube.com/@mwangi-t2r/videos",
+  linkedinUrl: process.env.NEXT_PUBLIC_LINKEDIN_URL ?? "https://www.linkedin.com/in/kennice-tours-ltd-kennice-287206387",
   coverage: ["Kenya", "Uganda", "Tanzania", "Rwanda", "Zanzibar"],
 };
