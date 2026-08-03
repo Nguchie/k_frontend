@@ -803,6 +803,12 @@ img {
   color: var(--deep-green);
 }
 
+.form-error {
+  margin: 0;
+  color: var(--sunset-red);
+  font-weight: 600;
+}
+
 .archive-shell {
   padding: 40px 0 80px;
 }

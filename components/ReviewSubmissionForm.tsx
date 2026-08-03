@@ -12,12 +12,14 @@ type ReviewSubmissionFormProps = {
 
 export function ReviewSubmissionForm({ tourId, destinationId, tourOptions = [] }: ReviewSubmissionFormProps) {
   const [state, setState] = useState<"idle" | "loading" | "done">("idle");
+  const [error, setError] = useState<string | null>(null);
   const [selectedTourId, setSelectedTourId] = useState<number>(tourOptions[0]?.id || tourId || 0);
   const selectedTour = tourOptions.find((option) => option.id === selectedTourId);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setState("loading");
+    setError(null);
 
     const payload = Object.fromEntries(new FormData(event.currentTarget).entries());
 
@@ -37,6 +39,7 @@ export function ReviewSubmissionForm({ tourId, destinationId, tourOptions = [] }
       setState("done");
     } catch {
       setState("idle");
+      setError("We could not submit your review right now. Please try again shortly.");
     }
   }
 
@@ -95,6 +98,7 @@ export function ReviewSubmissionForm({ tourId, destinationId, tourOptions = [] }
       <button className="button primary" type="submit" disabled={state === "loading"}>
         {state === "loading" ? "Sending..." : "Submit Review"}
       </button>
+      {error ? <p className="form-error" role="alert">{error}</p> : null}
       {state === "done" ? <p className="form-success">Review received. It will appear after admin approval.</p> : null}
     </form>
   );
