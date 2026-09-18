@@ -359,6 +359,16 @@ img {
   color: var(--white);
 }
 
+.section-band.mist .button.secondary {
+  color: var(--sunset-red);
+  background: transparent;
+  border-color: var(--sunset-red);
+}
+
+.section-band.mist .button.secondary:hover {
+  background: rgba(217, 79, 43, 0.08);
+}
+
 .page-section {
   padding: 56px 0;
   position: relative;
