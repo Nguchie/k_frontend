@@ -1,0 +1,5 @@
+# Test files stay local / in git. Do not upload them to the Vercel production build.
+**/*.test.ts
+**/*.test.tsx
+vitest.config.ts
+vitest.setup.ts

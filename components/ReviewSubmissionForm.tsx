@@ -1,8 +1,9 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useRef, useState } from "react";
 
 import { submitReview } from "@/lib/api";
+import { safeResetForm } from "@/lib/form";
 
 type ReviewSubmissionFormProps = {
   tourId?: number;
@@ -11,6 +12,7 @@ type ReviewSubmissionFormProps = {
 };
 
 export function ReviewSubmissionForm({ tourId, destinationId, tourOptions = [] }: ReviewSubmissionFormProps) {
+  const formRef = useRef<HTMLFormElement>(null);
   const [state, setState] = useState<"idle" | "loading" | "done">("idle");
   const [error, setError] = useState<string | null>(null);
   const [selectedTourId, setSelectedTourId] = useState<number>(tourOptions[0]?.id || tourId || 0);
@@ -18,7 +20,11 @@ export function ReviewSubmissionForm({ tourId, destinationId, tourOptions = [] }
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const form = event.currentTarget;
+    const form = formRef.current;
+    if (!form) {
+      return;
+    }
+
     setState("loading");
     setError(null);
 
@@ -36,7 +42,7 @@ export function ReviewSubmissionForm({ tourId, destinationId, tourOptions = [] }
         tour: Number(payload.tour || selectedTourId || tourId || 0) || undefined,
         destination: Number(payload.destination || selectedTour?.destinationId || destinationId || 0) || undefined,
       });
-      form.reset();
+      safeResetForm(form);
       setState("done");
     } catch {
       setState("idle");
@@ -45,7 +51,7 @@ export function ReviewSubmissionForm({ tourId, destinationId, tourOptions = [] }
   }
 
   return (
-    <form className="booking-form" onSubmit={onSubmit}>
+    <form ref={formRef} className="booking-form" onSubmit={onSubmit}>
       <label>
         Name
         <input name="reviewer_name" required placeholder="Your name" />

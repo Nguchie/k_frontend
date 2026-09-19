@@ -1,9 +1,10 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useMemo, useRef, useState } from "react";
 
 import { PhoneField } from "@/components/PhoneField";
 import { submitInquiry } from "@/lib/api";
+import { getTravelDateError, safeResetForm } from "@/lib/form";
 import { BookingDateOption } from "@/lib/types";
 
 type BookingFormProps = {
@@ -42,6 +43,7 @@ export function BookingForm({
   dateOptions = [],
   suggestedDateLabel,
 }: BookingFormProps) {
+  const formRef = useRef<HTMLFormElement>(null);
   const [state, setState] = useState<"idle" | "loading" | "done">("idle");
   const [error, setError] = useState<string | null>(null);
   const [travelFrom, setTravelFrom] = useState("");
@@ -53,7 +55,11 @@ export function BookingForm({
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const form = event.currentTarget;
+    const form = formRef.current;
+    if (!form) {
+      return;
+    }
+
     setError(null);
 
     const formData = new FormData(form);
@@ -62,16 +68,9 @@ export function BookingForm({
     const to = String(payload.travel_date_to || travelTo || "");
 
     if (useDateRange) {
-      if (from && from < minTravelDate) {
-        setError("Travel from cannot be a past date.");
-        return;
-      }
-      if (to && to < minTravelDate) {
-        setError("Travel to cannot be a past date.");
-        return;
-      }
-      if (from && to && to < from) {
-        setError("Travel to must be on or after the start date.");
+      const dateError = getTravelDateError(from, to, minTravelDate);
+      if (dateError) {
+        setError(dateError);
         return;
       }
     }
@@ -98,7 +97,7 @@ export function BookingForm({
         destination: destinationId,
         group_size: Number(payload.group_size || 2),
       });
-      form.reset();
+      safeResetForm(form);
       setTravelFrom("");
       setTravelTo("");
       setState("done");
@@ -109,7 +108,7 @@ export function BookingForm({
   }
 
   return (
-    <form className={`booking-form ${compact ? "compact" : ""}`} onSubmit={onSubmit}>
+    <form ref={formRef} className={`booking-form ${compact ? "compact" : ""}`} onSubmit={onSubmit}>
       <input type="hidden" name="source_page" value={sourcePage} />
       <input type="hidden" name="source_locale" value="en" />
       <input type="hidden" name="inquiry_type" value={inquiryType} />
