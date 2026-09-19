@@ -819,6 +819,44 @@ img {
   font-weight: 600;
 }
 
+.booking-form-fields {
+  display: contents;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  min-inline-size: 0;
+}
+
+.booking-form.is-sending {
+  opacity: 0.92;
+}
+
+.form-status {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  color: var(--earth-brown);
+  font-weight: 600;
+}
+
+.form-status::before {
+  content: "";
+  width: 16px;
+  height: 16px;
+  border: 2px solid var(--sunset-red);
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: form-spin 0.7s linear infinite;
+}
+
+@keyframes form-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .archive-shell {
   padding: 40px 0 80px;
 }

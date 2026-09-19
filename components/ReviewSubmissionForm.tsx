@@ -50,8 +50,16 @@ export function ReviewSubmissionForm({ tourId, destinationId, tourOptions = [] }
     }
   }
 
-  return (
-    <form ref={formRef} className="booking-form" onSubmit={onSubmit}>
+    const isSending = state === "loading";
+
+    return (
+    <form
+      ref={formRef}
+      className={`booking-form ${isSending ? "is-sending" : ""}`}
+      onSubmit={onSubmit}
+      aria-busy={isSending}
+    >
+      <fieldset className="booking-form-fields" disabled={isSending}>
       <label>
         Name
         <input name="reviewer_name" required placeholder="Your name" />
@@ -102,9 +110,15 @@ export function ReviewSubmissionForm({ tourId, destinationId, tourOptions = [] }
         Review
         <textarea name="content" rows={4} required placeholder="Tell future travelers what stood out." />
       </label>
-      <button className="button primary" type="submit" disabled={state === "loading"}>
-        {state === "loading" ? "Sending..." : "Submit Review"}
+      <button className="button primary" type="submit">
+        {isSending ? "Sending..." : "Submit Review"}
       </button>
+      </fieldset>
+      {isSending ? (
+        <p className="form-status" role="status">
+          Sending your review. Please keep this page open.
+        </p>
+      ) : null}
       {error ? <p className="form-error" role="alert">{error}</p> : null}
       {state === "done" ? <p className="form-success">Review received. It will appear after admin approval.</p> : null}
     </form>

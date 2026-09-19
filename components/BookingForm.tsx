@@ -107,8 +107,16 @@ export function BookingForm({
     }
   }
 
-  return (
-    <form ref={formRef} className={`booking-form ${compact ? "compact" : ""}`} onSubmit={onSubmit}>
+    const isSending = state === "loading";
+
+    return (
+    <form
+      ref={formRef}
+      className={`booking-form ${compact ? "compact" : ""} ${isSending ? "is-sending" : ""}`}
+      onSubmit={onSubmit}
+      aria-busy={isSending}
+    >
+      <fieldset className="booking-form-fields" disabled={isSending}>
       <input type="hidden" name="source_page" value={sourcePage} />
       <input type="hidden" name="source_locale" value="en" />
       <input type="hidden" name="inquiry_type" value={inquiryType} />
@@ -204,9 +212,15 @@ export function BookingForm({
           }
         />
       </label>
-      <button className="button primary" type="submit" disabled={state === "loading"}>
-        {state === "loading" ? "Sending..." : submitLabel}
+      <button className="button primary" type="submit">
+        {isSending ? "Sending..." : submitLabel}
       </button>
+      </fieldset>
+      {isSending ? (
+        <p className="form-status" role="status">
+          Sending your request. Please keep this page open.
+        </p>
+      ) : null}
       {error ? <p className="form-error" role="alert">{error}</p> : null}
       {state === "done" ? <p className="form-success">Received. We will get back to you shortly.</p> : null}
     </form>
