@@ -18,10 +18,11 @@ export function ReviewSubmissionForm({ tourId, destinationId, tourOptions = [] }
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const form = event.currentTarget;
     setState("loading");
     setError(null);
 
-    const payload = Object.fromEntries(new FormData(event.currentTarget).entries());
+    const payload = Object.fromEntries(new FormData(form).entries());
 
     try {
       await submitReview({
@@ -35,15 +36,11 @@ export function ReviewSubmissionForm({ tourId, destinationId, tourOptions = [] }
         tour: Number(payload.tour || selectedTourId || tourId || 0) || undefined,
         destination: Number(payload.destination || selectedTour?.destinationId || destinationId || 0) || undefined,
       });
-      event.currentTarget.reset();
+      form.reset();
       setState("done");
-    } catch (submitError) {
+    } catch {
       setState("idle");
-      setError(
-        submitError instanceof Error
-          ? submitError.message
-          : "We could not submit your review right now. Please try again shortly.",
-      );
+      setError("We could not submit your review right now. Please try again shortly.");
     }
   }
 

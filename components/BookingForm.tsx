@@ -102,9 +102,9 @@ export function BookingForm({
       setTravelFrom("");
       setTravelTo("");
       setState("done");
-    } catch (submitError) {
+    } catch {
       setState("idle");
-      setError(submitError instanceof Error ? submitError.message : "We could not send your request. Please try again shortly.");
+      setError("We could not send your request. Please try again shortly.");
     }
   }
 
