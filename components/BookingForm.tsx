@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useMemo, useState } from "react";
 
 import { PhoneField } from "@/components/PhoneField";
 import { submitInquiry } from "@/lib/api";
@@ -20,6 +20,15 @@ type BookingFormProps = {
   suggestedDateLabel?: string;
 };
 
+function localISODate(date = new Date()) {
+  const timezoneOffset = date.getTimezoneOffset() * 60_000;
+  return new Date(date.getTime() - timezoneOffset).toISOString().slice(0, 10);
+}
+
+function formatTravelDates(from: string, to: string) {
+  return [from, to].filter(Boolean).join(" to ");
+}
+
 export function BookingForm({
   sourcePage,
   compact = false,
@@ -34,15 +43,40 @@ export function BookingForm({
   suggestedDateLabel,
 }: BookingFormProps) {
   const [state, setState] = useState<"idle" | "loading" | "done">("idle");
+  const [error, setError] = useState<string | null>(null);
+  const [travelFrom, setTravelFrom] = useState("");
+  const [travelTo, setTravelTo] = useState("");
+  const minTravelDate = useMemo(() => localISODate(), []);
+  const minReturnDate = travelFrom && travelFrom > minTravelDate ? travelFrom : minTravelDate;
   const isNotifyRequest = inquiryType === "notify";
   const isCustomRequest = inquiryType === "custom";
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setState("loading");
+    const form = event.currentTarget;
+    setError(null);
 
-    const formData = new FormData(event.currentTarget);
+    const formData = new FormData(form);
     const payload = Object.fromEntries(formData.entries());
+    const from = String(payload.travel_date_from || travelFrom || "");
+    const to = String(payload.travel_date_to || travelTo || "");
+
+    if (useDateRange) {
+      if (from && from < minTravelDate) {
+        setError("Travel from cannot be a past date.");
+        return;
+      }
+      if (to && to < minTravelDate) {
+        setError("Travel to cannot be a past date.");
+        return;
+      }
+      if (from && to && to < from) {
+        setError("Travel to must be on or after the start date.");
+        return;
+      }
+    }
+
+    setState("loading");
 
     try {
       await submitInquiry({
@@ -52,7 +86,7 @@ export function BookingForm({
           ? `${String(payload.phone_country_code || "")} ${String(payload.phone_number || "")}`.trim()
           : String(payload.phone || ""),
         travel_dates: useDateRange
-          ? `${String(payload.travel_date_from || "")} to ${String(payload.travel_date_to || "")}`.trim()
+          ? formatTravelDates(from, to)
           : String(payload.travel_dates || ""),
         preferred_tour_date: String(payload.preferred_tour_date || ""),
         message: String(payload.message || ""),
@@ -64,12 +98,14 @@ export function BookingForm({
         destination: destinationId,
         group_size: Number(payload.group_size || 2),
       });
-    } catch {
-      // Frontend remains usable before the backend is connected.
+      form.reset();
+      setTravelFrom("");
+      setTravelTo("");
+      setState("done");
+    } catch (submitError) {
+      setState("idle");
+      setError(submitError instanceof Error ? submitError.message : "We could not send your request. Please try again shortly.");
     }
-
-    event.currentTarget.reset();
-    setState("done");
   }
 
   return (
@@ -120,11 +156,29 @@ export function BookingForm({
         <div className="booking-date-grid">
           <label>
             Travel from
-            <input name="travel_date_from" type="date" />
+            <input
+              name="travel_date_from"
+              type="date"
+              min={minTravelDate}
+              value={travelFrom}
+              onChange={(event) => {
+                const nextFrom = event.target.value;
+                setTravelFrom(nextFrom);
+                if (travelTo && nextFrom && travelTo < nextFrom) {
+                  setTravelTo("");
+                }
+              }}
+            />
           </label>
           <label>
             Travel to
-            <input name="travel_date_to" type="date" />
+            <input
+              name="travel_date_to"
+              type="date"
+              min={minReturnDate}
+              value={travelTo}
+              onChange={(event) => setTravelTo(event.target.value)}
+            />
           </label>
         </div>
       ) : (
@@ -154,6 +208,7 @@ export function BookingForm({
       <button className="button primary" type="submit" disabled={state === "loading"}>
         {state === "loading" ? "Sending..." : submitLabel}
       </button>
+      {error ? <p className="form-error" role="alert">{error}</p> : null}
       {state === "done" ? <p className="form-success">Received. We will get back to you shortly.</p> : null}
     </form>
   );

@@ -37,9 +37,13 @@ export function ReviewSubmissionForm({ tourId, destinationId, tourOptions = [] }
       });
       event.currentTarget.reset();
       setState("done");
-    } catch {
+    } catch (submitError) {
       setState("idle");
-      setError("We could not submit your review right now. Please try again shortly.");
+      setError(
+        submitError instanceof Error
+          ? submitError.message
+          : "We could not submit your review right now. Please try again shortly.",
+      );
     }
   }
 

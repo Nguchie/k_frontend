@@ -47,7 +47,7 @@ export function useApiProxy() {
 }
 
 export function getApiBaseUrl() {
-  if (typeof window !== "undefined" && USE_API_PROXY) {
+  if (typeof window !== "undefined") {
     return "/api/proxy";
   }
 

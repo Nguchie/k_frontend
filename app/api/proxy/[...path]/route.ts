@@ -1,35 +1,79 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getBackendInternalUrl } from "@/lib/backend";
 
-const BACKEND_INTERNAL_URL = getBackendInternalUrl();
+export const maxDuration = 30;
+
+const HOP_BY_HOP_HEADERS = new Set([
+  "accept-encoding",
+  "connection",
+  "content-length",
+  "cookie",
+  "forwarded",
+  "host",
+  "keep-alive",
+  "location",
+  "origin",
+  "referer",
+  "set-cookie",
+  "te",
+  "trailer",
+  "transfer-encoding",
+  "upgrade",
+  "x-forwarded-for",
+  "x-forwarded-host",
+  "x-forwarded-port",
+  "x-forwarded-proto",
+  "x-real-ip",
+]);
 
 function getTargetUrl(request: NextRequest, path: string[]) {
-  if (!BACKEND_INTERNAL_URL) {
+  const backendUrl = getBackendInternalUrl();
+  if (!backendUrl) {
     throw new Error("Backend URL missing");
   }
 
-  const pathname = path.join("/");
+  const pathname = path.filter(Boolean).join("/");
   const search = request.nextUrl.search || "";
-  return `${BACKEND_INTERNAL_URL}/api/${pathname}/${search}`;
+  return `${backendUrl}/api/${pathname}/${search}`;
+}
+
+function buildRequestHeaders(request: NextRequest) {
+  const headers = new Headers();
+  const contentType = request.headers.get("content-type");
+  if (contentType) {
+    headers.set("content-type", contentType);
+  }
+  headers.set("accept", request.headers.get("accept") || "application/json");
+  return headers;
+}
+
+function buildResponseHeaders(response: Response) {
+  const headers = new Headers();
+  response.headers.forEach((value, key) => {
+    if (!HOP_BY_HOP_HEADERS.has(key.toLowerCase()) && key.toLowerCase() !== "content-encoding") {
+      headers.set(key, value);
+    }
+  });
+  return headers;
 }
 
 async function forwardRequest(request: NextRequest, path: string[]) {
   try {
     const targetUrl = getTargetUrl(request, path);
-    const headers = new Headers(request.headers);
-    headers.delete("host");
+    const method = request.method.toUpperCase();
+    const body = method === "GET" || method === "HEAD" ? undefined : await request.text();
 
     const response = await fetch(targetUrl, {
-      method: request.method,
-      headers,
-      body: request.method === "GET" || request.method === "HEAD" ? undefined : await request.text(),
-      redirect: "follow",
+      method,
+      headers: buildRequestHeaders(request),
+      body,
+      redirect: "manual",
       cache: "no-store",
     });
 
     return new NextResponse(response.body, {
       status: response.status,
-      headers: response.headers,
+      headers: buildResponseHeaders(response),
     });
   } catch (error) {
     return NextResponse.json(

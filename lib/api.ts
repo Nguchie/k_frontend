@@ -180,19 +180,71 @@ export async function getGuideCategory(slug: string) {
   }
 }
 
-export async function submitInquiry(payload: InquiryPayload) {
-  const apiBaseUrl = getApiBaseUrl();
-  const response = await fetch(`${apiBaseUrl}/inquiries/`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
+const SUBMIT_TIMEOUT_MS = 20000;
 
-  if (!response.ok) {
-    throw new Error(`Failed inquiry submission: ${response.status}`);
+function formatApiError(data: unknown, status: number) {
+  if (data && typeof data === "object") {
+    const record = data as Record<string, unknown>;
+    if (typeof record.detail === "string" && record.detail.trim()) {
+      return record.detail;
+    }
+
+    const fieldErrors = Object.entries(record)
+      .filter(([, value]) => typeof value === "string" || Array.isArray(value))
+      .map(([key, value]) => `${key}: ${Array.isArray(value) ? value.join(" ") : value}`)
+      .join(" ");
+
+    if (fieldErrors) {
+      return fieldErrors;
+    }
   }
 
-  return response.json();
+  return `Request failed (${status}). Please try again.`;
+}
+
+async function postJson<T>(path: string, payload: unknown): Promise<T> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), SUBMIT_TIMEOUT_MS);
+
+  try {
+    const response = await fetch(`/api/proxy${path}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
+      body: JSON.stringify(payload),
+      signal: controller.signal,
+    });
+
+    const text = await response.text();
+    let data: unknown = null;
+    try {
+      data = text ? JSON.parse(text) : null;
+    } catch {
+      data = { detail: text || `Request failed (${response.status}).` };
+    }
+
+    if (!response.ok) {
+      throw new Error(formatApiError(data, response.status));
+    }
+
+    return data as T;
+  } catch (error) {
+    if (error instanceof DOMException && error.name === "AbortError") {
+      throw new Error("The request timed out. Please try again.");
+    }
+    if (error instanceof TypeError) {
+      throw new Error("We could not reach the server. Please try again shortly.");
+    }
+    throw error;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+export async function submitInquiry(payload: InquiryPayload) {
+  return postJson("/inquiries/", payload);
 }
 
 export async function submitReview(payload: {
@@ -207,16 +259,5 @@ export async function submitReview(payload: {
   destination?: number;
   tour?: number;
 }) {
-  const apiBaseUrl = getApiBaseUrl();
-  const response = await fetch(`${apiBaseUrl}/reviews/submit/`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Failed review submission: ${response.status}`);
-  }
-
-  return response.json();
+  return postJson("/reviews/submit/", payload);
 }
