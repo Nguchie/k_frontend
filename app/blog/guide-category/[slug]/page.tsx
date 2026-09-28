@@ -9,6 +9,8 @@ import { SectionHeading } from "@/components/SectionHeading";
 import { getGuideCategories, getGuideCategory } from "@/lib/api";
 import { absoluteUrl, buildMetadata } from "@/lib/seo";
 
+export const revalidate = 3600;
+
 export async function generateMetadata({
   params,
 }: {

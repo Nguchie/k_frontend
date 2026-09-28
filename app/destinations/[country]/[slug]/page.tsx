@@ -11,6 +11,8 @@ import { TourCard } from "@/components/TourCard";
 import { getAllGuides, getAllTours, getDestination } from "@/lib/api";
 import { absoluteUrl, buildMetadata } from "@/lib/seo";
 
+export const revalidate = 3600;
+
 export async function generateMetadata({
   params,
 }: {

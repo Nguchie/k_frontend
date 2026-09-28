@@ -3,6 +3,8 @@ import { cache } from "react";
 import { Country, Destination, FAQCategory, GeneralFAQ, Guide, GuideCategory, HomepageFAQ, HomepageHeroSlide, InquiryPayload, Review, Tour } from "@/lib/types";
 import { getApiBaseUrl } from "@/lib/backend";
 
+export const CONTENT_REVALIDATE_SECONDS = 3600;
+
 async function fetchJson<T>(path: string): Promise<T> {
   const apiBaseUrl = getApiBaseUrl();
   if (!apiBaseUrl) {
@@ -10,24 +12,7 @@ async function fetchJson<T>(path: string): Promise<T> {
   }
 
   const response = await fetch(`${apiBaseUrl}${path}`, {
-    cache: "no-store",
-  });
-
-  if (!response.ok) {
-    throw new Error(`Failed request: ${response.status}`);
-  }
-
-  return response.json();
-}
-
-async function fetchJsonNoStore<T>(path: string): Promise<T> {
-  const apiBaseUrl = getApiBaseUrl();
-  if (!apiBaseUrl) {
-    throw new Error("API base URL missing");
-  }
-
-  const response = await fetch(`${apiBaseUrl}${path}`, {
-    cache: "no-store",
+    next: { revalidate: CONTENT_REVALIDATE_SECONDS },
   });
 
   if (!response.ok) {
@@ -61,38 +46,38 @@ export const getHomepageData = cache(async function getHomepageData() {
   }
 });
 
-export async function getDestination(country: string, slug: string) {
+export const getDestination = cache(async function getDestination(country: string, slug: string) {
   try {
-    return await fetchJsonNoStore<Destination>(`/destinations/${country}/${slug}/detail/`);
+    return await fetchJson<Destination>(`/destinations/${country}/${slug}/detail/`);
   } catch {
     return null;
   }
-}
+});
 
-export async function getTour(country: string, slug: string) {
+export const getTour = cache(async function getTour(country: string, slug: string) {
   try {
-    return await fetchJsonNoStore<Tour>(`/tours/${country}/${slug}/detail/`);
+    return await fetchJson<Tour>(`/tours/${country}/${slug}/detail/`);
   } catch {
     return null;
   }
-}
+});
 
-export async function getGuide(slug: string) {
+export const getGuide = cache(async function getGuide(slug: string) {
   try {
-    return await fetchJsonNoStore<Guide>(`/guides/${slug}/detail/`);
+    return await fetchJson<Guide>(`/guides/${slug}/detail/`);
   } catch {
     return null;
   }
-}
+});
 
-export async function getReviews() {
+export const getReviews = cache(async function getReviews() {
   try {
     const response = await fetchJson<Review[] | { results: Review[] }>("/reviews/");
     return Array.isArray(response) ? response : response.results;
   } catch {
     return [];
   }
-}
+});
 
 export async function searchContent(params: URLSearchParams) {
   try {
@@ -110,57 +95,57 @@ export async function searchContent(params: URLSearchParams) {
   }
 }
 
-export async function getAllDestinations() {
+export const getAllDestinations = cache(async function getAllDestinations() {
   try {
     const response = await fetchJson<{ results: Destination[] }>("/destinations/");
     return response.results;
   } catch {
     return [] as Destination[];
   }
-}
+});
 
-export async function getAllCountries() {
+export const getAllCountries = cache(async function getAllCountries() {
   try {
     const response = await fetchJson<{ results: Country[] }>("/countries/");
     return response.results;
   } catch {
     return [] as Country[];
   }
-}
+});
 
-export async function getAllTours() {
+export const getAllTours = cache(async function getAllTours() {
   try {
     const response = await fetchJson<{ results: Tour[] }>("/tours/");
     return response.results;
   } catch {
     return [] as Tour[];
   }
-}
+});
 
-export async function getAllGuides() {
+export const getAllGuides = cache(async function getAllGuides() {
   try {
     const response = await fetchJson<{ results: Guide[] }>("/guides/");
     return response.results;
   } catch {
     return [] as Guide[];
   }
-}
+});
 
-export async function getGuideCategories() {
+export const getGuideCategories = cache(async function getGuideCategories() {
   try {
     return await fetchJson<GuideCategory[]>("/guide-categories/");
   } catch {
     return [] as GuideCategory[];
   }
-}
+});
 
-export async function getFAQCategories() {
+export const getFAQCategories = cache(async function getFAQCategories() {
   try {
     return await fetchJson<FAQCategory[]>("/faq-categories/");
   } catch {
     return [] as FAQCategory[];
   }
-}
+});
 
 export async function getGeneralFAQs(params?: URLSearchParams) {
   try {
@@ -172,13 +157,13 @@ export async function getGeneralFAQs(params?: URLSearchParams) {
   }
 }
 
-export async function getGuideCategory(slug: string) {
+export const getGuideCategory = cache(async function getGuideCategory(slug: string) {
   try {
     return await fetchJson<{ category: GuideCategory; guides: Guide[] }>(`/guide-categories/${slug}/`);
   } catch {
     return null;
   }
-}
+});
 
 const SUBMIT_TIMEOUT_MS = 20000;
 

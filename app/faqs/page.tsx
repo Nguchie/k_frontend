@@ -8,6 +8,8 @@ import { SectionHeading } from "@/components/SectionHeading";
 import { getAllCountries, getFAQCategories, getGeneralFAQs } from "@/lib/api";
 import { buildMetadata } from "@/lib/seo";
 
+export const revalidate = 3600;
+
 export const metadata: Metadata = buildMetadata({
   title: "Safari FAQs",
   description: "Answers to common safari planning questions about packing, honeymoons, payments, travel documents, safety, and East Africa destinations.",

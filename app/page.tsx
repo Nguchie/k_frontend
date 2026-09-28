@@ -15,6 +15,8 @@ import { getAllCountries, getHomepageData } from "@/lib/api";
 import { getImageSource } from "@/lib/media";
 import { buildMetadata } from "@/lib/seo";
 
+export const revalidate = 3600;
+
 export const metadata: Metadata = buildMetadata({
   title: "East Africa Safari Tours",
   description: "Browse East Africa safari tours, destinations, traveler reviews, and planning guides for Kenya, Uganda, Tanzania, Rwanda, and Zanzibar.",

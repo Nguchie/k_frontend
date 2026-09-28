@@ -5,6 +5,8 @@ import { SectionHeading } from "@/components/SectionHeading";
 import { getAllDestinations } from "@/lib/api";
 import { buildMetadata } from "@/lib/seo";
 
+export const revalidate = 3600;
+
 export const metadata: Metadata = buildMetadata({
   title: "Safari Destinations",
   description: "Explore safari destinations across Kenya, Uganda, Tanzania, Rwanda, and Zanzibar with wildlife highlights, travel seasons, and route ideas.",

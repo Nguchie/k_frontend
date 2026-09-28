@@ -7,6 +7,8 @@ import { SectionHeading } from "@/components/SectionHeading";
 import { getAllGuides, getGuideCategories } from "@/lib/api";
 import { buildMetadata } from "@/lib/seo";
 
+export const revalidate = 3600;
+
 export const metadata: Metadata = buildMetadata({
   title: "Safari Guides",
   description: "Read safari guides on timing, packing, routes, and destination planning before you book.",

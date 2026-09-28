@@ -14,6 +14,8 @@ import { getAllGuides, getAllTours, getTour } from "@/lib/api";
 import { getEmbeddableVideoUrl } from "@/lib/media";
 import { absoluteUrl, buildMetadata } from "@/lib/seo";
 
+export const revalidate = 3600;
+
 export async function generateMetadata({
   params,
 }: {

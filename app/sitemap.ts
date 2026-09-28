@@ -3,6 +3,8 @@ import type { MetadataRoute } from "next";
 import { getAllCountries, getAllDestinations, getAllGuides, getAllTours, getGuideCategories } from "@/lib/api";
 import { absoluteUrl } from "@/lib/seo";
 
+export const revalidate = 3600;
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [countries, destinations, tours, guides, guideCategories] = await Promise.all([
     getAllCountries(),

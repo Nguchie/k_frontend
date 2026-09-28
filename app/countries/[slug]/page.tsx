@@ -9,6 +9,8 @@ import { getAllCountries, getAllDestinations, getAllGuides, getAllTours } from "
 import { getImageSource } from "@/lib/media";
 import { buildMetadata } from "@/lib/seo";
 
+export const revalidate = 3600;
+
 export async function generateMetadata({
   params,
 }: {

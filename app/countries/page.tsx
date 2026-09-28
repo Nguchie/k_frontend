@@ -7,6 +7,8 @@ import { getAllCountries, getAllDestinations, getAllGuides, getAllTours } from "
 import { getImageSource } from "@/lib/media";
 import { buildMetadata } from "@/lib/seo";
 
+export const revalidate = 3600;
+
 export const metadata: Metadata = buildMetadata({
   title: "Explore Countries",
   description: "Browse East African safari countries, then move into destinations, tours, and planning guides for each one.",

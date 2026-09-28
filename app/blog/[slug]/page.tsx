@@ -13,6 +13,8 @@ import { getAllGuides, getGuide, getGuideCategories } from "@/lib/api";
 import { getImageSource } from "@/lib/media";
 import { absoluteUrl, buildMetadata } from "@/lib/seo";
 
+export const revalidate = 3600;
+
 export async function generateMetadata({
   params,
 }: {

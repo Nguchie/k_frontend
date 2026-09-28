@@ -8,6 +8,8 @@ import { SectionHeading } from "@/components/SectionHeading";
 import { getAllTours, getReviews } from "@/lib/api";
 import { absoluteUrl, buildMetadata } from "@/lib/seo";
 
+export const revalidate = 3600;
+
 export const metadata: Metadata = buildMetadata({
   title: "Traveler Reviews",
   description: "Read traveler reviews for East Africa safari tours and destinations, and submit your own review.",
