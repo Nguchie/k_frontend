@@ -13,8 +13,6 @@ import { dictionaries } from "@/lib/copy";
 import { absoluteUrl } from "@/lib/seo";
 import { siteConfig } from "@/lib/site";
 
-export const revalidate = 3600;
-
 export const metadata: Metadata = {
   metadataBase: new URL(absoluteUrl("/")),
   title: {

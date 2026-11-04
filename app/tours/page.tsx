@@ -7,8 +7,6 @@ import { TourCard } from "@/components/TourCard";
 import { getAllTours } from "@/lib/api";
 import { buildMetadata } from "@/lib/seo";
 
-export const revalidate = 3600;
-
 export const metadata: Metadata = buildMetadata({
   title: "Safari Tours",
   description: "Compare safari tours by destination, budget, duration, and travel style across East Africa.",
