@@ -8,16 +8,38 @@ import { SectionHeading } from "@/components/SectionHeading";
 import { getAllCountries, getFAQCategories, getGeneralFAQs } from "@/lib/api";
 import { buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = buildMetadata({
-  title: "Safari FAQs",
-  description: "Answers to common safari planning questions about packing, honeymoons, payments, travel documents, safety, and East Africa destinations.",
-  canonical: "/faqs",
-});
+const FAQ_DESCRIPTION =
+  "Answers to common safari planning questions about packing, honeymoons, payments, travel documents, safety, and East Africa destinations.";
+
+type FAQSearchParams = Record<string, string | string[] | undefined>;
+
+function hasFAQFilters(filters: FAQSearchParams) {
+  return Boolean(
+    (typeof filters.category === "string" && filters.category) ||
+      (typeof filters.country === "string" && filters.country) ||
+      (typeof filters.search === "string" && filters.search),
+  );
+}
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<FAQSearchParams>;
+}): Promise<Metadata> {
+  const filters = await searchParams;
+  return buildMetadata({
+    title: "Safari FAQs",
+    description: FAQ_DESCRIPTION,
+    canonical: "/faqs",
+    // Filter/search URLs are UI state only. Keep one indexable FAQ page.
+    noindex: hasFAQFilters(filters),
+  });
+}
 
 export default async function FAQsPage({
   searchParams,
 }: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
+  searchParams: Promise<FAQSearchParams>;
 }) {
   const filters = await searchParams;
   const category = typeof filters.category === "string" ? filters.category : "";

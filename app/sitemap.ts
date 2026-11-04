@@ -30,26 +30,28 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: path === "/" ? 1 : 0.8,
   }));
 
+  // Prefer path-based URLs so sitemap always uses NEXT_PUBLIC_SITE_URL (www),
+  // not older apex/http values stored in Django canonical_url fields.
   const destinationRoutes: MetadataRoute.Sitemap = destinations.map((destination) => ({
-    url: absoluteUrl(destination.canonical_url || `/destinations/${destination.country.slug}/${destination.slug}`),
+    url: absoluteUrl(`/destinations/${destination.country.slug}/${destination.slug}`),
     changeFrequency: "weekly",
     priority: 0.85,
   }));
 
   const countryRoutes: MetadataRoute.Sitemap = countries.map((country) => ({
-    url: absoluteUrl(country.canonical_url || `/countries/${country.slug}`),
+    url: absoluteUrl(`/countries/${country.slug}`),
     changeFrequency: "weekly",
     priority: 0.82,
   }));
 
   const tourRoutes: MetadataRoute.Sitemap = tours.map((tour) => ({
-    url: absoluteUrl(tour.canonical_url || `/tours/${tour.destination.country.slug}/${tour.slug}`),
+    url: absoluteUrl(`/tours/${tour.destination.country.slug}/${tour.slug}`),
     changeFrequency: "weekly",
     priority: 0.9,
   }));
 
   const guideRoutes: MetadataRoute.Sitemap = guides.map((guide) => ({
-    url: absoluteUrl(guide.canonical_url || `/blog/${guide.slug}`),
+    url: absoluteUrl(`/blog/${guide.slug}`),
     changeFrequency: "monthly",
     priority: 0.75,
   }));

@@ -7,16 +7,27 @@ import { SectionHeading } from "@/components/SectionHeading";
 import { getAllGuides, getGuideCategories } from "@/lib/api";
 import { buildMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = buildMetadata({
-  title: "Safari Guides",
-  description: "Read safari guides on timing, packing, routes, and destination planning before you book.",
-  canonical: "/blog",
-});
+type BlogSearchParams = Record<string, string | string[] | undefined>;
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<BlogSearchParams>;
+}): Promise<Metadata> {
+  const filters = await searchParams;
+  const country = typeof filters.country === "string" ? filters.country : "";
+  return buildMetadata({
+    title: "Safari Guides",
+    description: "Read safari guides on timing, packing, routes, and destination planning before you book.",
+    canonical: "/blog",
+    noindex: Boolean(country),
+  });
+}
 
 export default async function BlogPage({
   searchParams,
 }: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
+  searchParams: Promise<BlogSearchParams>;
 }) {
   const filters = await searchParams;
   const [guides, categories] = await Promise.all([getAllGuides(), getGuideCategories()]);

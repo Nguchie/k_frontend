@@ -115,8 +115,8 @@ export function GeneralFAQExplorer({
           {countries.map((country) => (
             <Link
               key={country.id}
-              href={buildHref({ country: country.code })}
-              className={`filter-chip ${activeCountry.toLowerCase() === country.code.toLowerCase() ? "is-active" : ""}`}
+              href={buildHref({ country: country.slug })}
+              className={`filter-chip ${activeCountry.toLowerCase() === country.slug.toLowerCase() ? "is-active" : ""}`}
             >
               {country.name}
             </Link>
