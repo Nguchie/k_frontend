@@ -6,7 +6,8 @@ import { Destination } from "@/lib/types";
 export function DestinationCard({ destination }: { destination: Destination }) {
   const leadImage = getFirstGalleryImage(destination.gallery);
   const imageSrc = getImageSource(leadImage);
-  const summary = destination.summary_en.length > 140 ? `${destination.summary_en.slice(0, 137).trimEnd()}...` : destination.summary_en;
+  const summaryText = destination.summary_en || "";
+  const summary = summaryText.length > 140 ? `${summaryText.slice(0, 137).trimEnd()}...` : summaryText;
 
   return (
     <Link href={`/destinations/${destination.country.slug}/${destination.slug}`} className="card destination-card card-link">

@@ -22,6 +22,51 @@ async function fetchJson<T>(path: string): Promise<T> {
   return response.json();
 }
 
+type Paginated<T> = {
+  count?: number;
+  next?: string | null;
+  previous?: string | null;
+  results: T[];
+};
+
+function withPage(path: string, page: number) {
+  const joiner = path.includes("?") ? "&" : "?";
+  return `${path}${joiner}page=${page}`;
+}
+
+/** Follow DRF page links so list helpers are not capped at PAGE_SIZE (12). */
+async function fetchAllPages<T>(path: string, maxPages = 50): Promise<T[]> {
+  const first = await fetchJson<Paginated<T> | T[]>(path);
+  if (Array.isArray(first)) {
+    return first;
+  }
+
+  const items = [...(first.results || [])];
+  let nextUrl = first.next || null;
+  let page = 2;
+
+  while (nextUrl && page <= maxPages) {
+    // Prefer explicit page numbers. Absolute DRF "next" URLs point at the
+    // public Railway host, which the Vercel server may not use.
+    const batch = await fetchJson<Paginated<T> | T[]>(withPage(path, page));
+    if (Array.isArray(batch)) {
+      items.push(...batch);
+      break;
+    }
+
+    const batchResults = batch.results || [];
+    if (!batchResults.length) {
+      break;
+    }
+
+    items.push(...batchResults);
+    nextUrl = batch.next || null;
+    page += 1;
+  }
+
+  return items;
+}
+
 export const getHomepageData = cache(async function getHomepageData() {
   try {
     return await fetchJson<{
@@ -97,8 +142,7 @@ export async function searchContent(params: URLSearchParams) {
 
 export const getAllDestinations = cache(async function getAllDestinations() {
   try {
-    const response = await fetchJson<{ results: Destination[] }>("/destinations/");
-    return response.results;
+    return await fetchAllPages<Destination>("/destinations/");
   } catch {
     return [] as Destination[];
   }
@@ -106,8 +150,7 @@ export const getAllDestinations = cache(async function getAllDestinations() {
 
 export const getAllCountries = cache(async function getAllCountries() {
   try {
-    const response = await fetchJson<{ results: Country[] }>("/countries/");
-    return response.results;
+    return await fetchAllPages<Country>("/countries/");
   } catch {
     return [] as Country[];
   }
@@ -115,8 +158,7 @@ export const getAllCountries = cache(async function getAllCountries() {
 
 export const getAllTours = cache(async function getAllTours() {
   try {
-    const response = await fetchJson<{ results: Tour[] }>("/tours/");
-    return response.results;
+    return await fetchAllPages<Tour>("/tours/");
   } catch {
     return [] as Tour[];
   }
@@ -124,8 +166,7 @@ export const getAllTours = cache(async function getAllTours() {
 
 export const getAllGuides = cache(async function getAllGuides() {
   try {
-    const response = await fetchJson<{ results: Guide[] }>("/guides/");
-    return response.results;
+    return await fetchAllPages<Guide>("/guides/");
   } catch {
     return [] as Guide[];
   }

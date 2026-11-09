@@ -33,13 +33,14 @@ export default async function CountriesPage() {
       </div>
       <div className="grid cards-3">
         {countries.map((country) => {
-          const destinationCount = destinations.filter((destination) => destination.country.slug === country.slug).length;
-          const tourCount = tours.filter((tour) =>
-            (tour.destinations?.length ? tour.destinations : [tour.destination]).some((destination) => destination.country.slug === country.slug),
-          ).length;
+          const destinationCount = destinations.filter((destination) => destination.country?.slug === country.slug).length;
+          const tourCount = tours.filter((tour) => {
+            const linked = tour.destinations?.length ? tour.destinations : tour.destination ? [tour.destination] : [];
+            return linked.some((destination) => destination?.country?.slug === country.slug);
+          }).length;
           const guideCount = guides.filter((guide) =>
             guide.country?.slug === country.slug
-            || guide.destinations?.some((destination) => destination.country.slug === country.slug),
+            || guide.destinations?.some((destination) => destination.country?.slug === country.slug),
           ).length;
 
           return (

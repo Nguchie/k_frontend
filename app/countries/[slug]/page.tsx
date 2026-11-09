@@ -52,13 +52,14 @@ export default async function CountryDetailPage({
     notFound();
   }
 
-  const destinations = allDestinations.filter((destination) => destination.country.slug === country.slug);
-  const tourCount = allTours.filter((tour) =>
-    (tour.destinations?.length ? tour.destinations : [tour.destination]).some((destination) => destination.country.slug === country.slug),
-  );
+  const destinations = allDestinations.filter((destination) => destination.country?.slug === country.slug);
+  const tourCount = allTours.filter((tour) => {
+    const linked = tour.destinations?.length ? tour.destinations : tour.destination ? [tour.destination] : [];
+    return linked.some((destination) => destination?.country?.slug === country.slug);
+  });
   const guideCount = allGuides.filter((guide) =>
     guide.country?.slug === country.slug
-    || guide.destinations?.some((destination) => destination.country.slug === country.slug),
+    || guide.destinations?.some((destination) => destination.country?.slug === country.slug),
   );
   const countryImageSrc = getImageSource(country.image);
 
@@ -92,11 +93,15 @@ export default async function CountryDetailPage({
 
         <section className="detail-block">
           <SectionHeading title={`Destinations in ${country.name}`} body={`Wildlife areas, parks, and travel regions to explore across ${country.name}.`} />
-          <div className="grid country-destination-grid">
-            {destinations.map((destination) => (
-              <DestinationCard key={destination.id} destination={destination} />
-            ))}
-          </div>
+          {destinations.length ? (
+            <div className="grid country-destination-grid">
+              {destinations.map((destination) => (
+                <DestinationCard key={destination.id} destination={destination} />
+              ))}
+            </div>
+          ) : (
+            <p>Destinations for {country.name} are being added. Browse tours or ask us for a route that fits your dates.</p>
+          )}
         </section>
 
         <section className="detail-block">
