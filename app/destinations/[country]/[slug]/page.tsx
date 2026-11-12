@@ -8,8 +8,18 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { JsonLd } from "@/components/JsonLd";
 import { SectionHeading } from "@/components/SectionHeading";
 import { TourCard } from "@/components/TourCard";
-import { getAllGuides, getAllTours, getDestination } from "@/lib/api";
+import { getAllDestinations, getAllGuides, getAllTours, getDestination } from "@/lib/api";
 import { absoluteUrl, buildMetadata } from "@/lib/seo";
+
+export const revalidate = 3600;
+
+export async function generateStaticParams() {
+  const destinations = await getAllDestinations();
+  return destinations.map((destination) => ({
+    country: destination.country.slug,
+    slug: destination.slug,
+  }));
+}
 
 export async function generateMetadata({
   params,

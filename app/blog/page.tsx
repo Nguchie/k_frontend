@@ -1,72 +1,39 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 
-import { BlogSidebar } from "@/components/BlogSidebar";
-import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { BlogCard } from "@/components/BlogCard";
-import { SectionHeading } from "@/components/SectionHeading";
+import { BlogArchive } from "@/components/BlogArchive";
 import { getAllGuides, getGuideCategories } from "@/lib/api";
 import { buildMetadata } from "@/lib/seo";
 
-type BlogSearchParams = Record<string, string | string[] | undefined>;
+// Statically rendered + ISR. Do not await searchParams here — that makes the
+// route dynamic and every `/blog?country=…` variant a function invocation.
+// Country filtering is applied client-side in BlogArchive.
+export const revalidate = 3600;
+export const dynamic = "force-static";
 
-export async function generateMetadata({
-  searchParams,
-}: {
-  searchParams: Promise<BlogSearchParams>;
-}): Promise<Metadata> {
-  const filters = await searchParams;
-  const country = typeof filters.country === "string" ? filters.country : "";
-  return buildMetadata({
-    title: "Safari Guides",
-    description: "Read safari guides on timing, packing, routes, and destination planning before you book.",
-    canonical: "/blog",
-    noindex: Boolean(country),
-  });
-}
+export const metadata: Metadata = buildMetadata({
+  title: "Safari Guides",
+  description: "Read safari guides on timing, packing, routes, and destination planning before you book.",
+  canonical: "/blog",
+});
 
-export default async function BlogPage({
-  searchParams,
-}: {
-  searchParams: Promise<BlogSearchParams>;
-}) {
-  const filters = await searchParams;
+export default async function BlogPage() {
   const [guides, categories] = await Promise.all([getAllGuides(), getGuideCategories()]);
-  const country = typeof filters.country === "string" ? filters.country : "";
-  const filteredGuides = country
-    ? guides.filter((guide) =>
-      guide.country?.slug === country
-      || guide.destinations?.some((destination) => destination.country.slug === country),
-    )
-    : guides;
-  const countryName = country
-    ? (guides.find((guide) =>
-      guide.country?.slug === country
-      || guide.destinations?.some((destination) => destination.country.slug === country),
-    )?.country?.name
-      || guides.flatMap((guide) => guide.destinations || []).find((destination) => destination.country.slug === country)?.country.name
-      || "")
-    : "";
 
   return (
     <div className="archive-shell">
-      <div className="archive-hero">
-        <Breadcrumbs items={[{ label: "Home", href: "/" }, ...(country ? [{ label: "Countries", href: "/countries" }, { label: countryName || country }] : []), { label: "Blog" }]} />
-        <SectionHeading
-          title={countryName ? `${countryName} Guides` : "Safari Guides"}
-          body={countryName ? `Use these guides to plan routes, timing, and safari decisions in ${countryName}.` : "Use these guides to plan timing, packing, routes, and the right safari style before booking."}
-          level="h1"
-        />
-      </div>
-      <div className="blog-archive-layout">
-        <div className="grid cards-3">
-          {filteredGuides.map((guide) => (
-            <BlogCard key={guide.id} guide={guide} />
-          ))}
-        </div>
-        <aside>
-          <BlogSidebar categories={categories} guides={filteredGuides} />
-        </aside>
-      </div>
+      <Suspense fallback={<BlogArchiveFallback />}>
+        <BlogArchive guides={guides} categories={categories} />
+      </Suspense>
+    </div>
+  );
+}
+
+function BlogArchiveFallback() {
+  return (
+    <div className="archive-hero">
+      <p className="eyebrow">Safari Guides</p>
+      <h1>Safari Guides</h1>
     </div>
   );
 }

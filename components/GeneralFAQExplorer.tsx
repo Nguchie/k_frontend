@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 
 import { getImageSource } from "@/lib/media";
@@ -11,71 +10,122 @@ type GeneralFAQExplorerProps = {
   categories: FAQCategory[];
   countries: Country[];
   faqs: GeneralFAQ[];
-  activeCategory?: string;
-  activeCountry?: string;
-  activeSearch?: string;
 };
 
-export function GeneralFAQExplorer({
-  categories,
-  countries,
-  faqs,
-  activeCategory = "",
-  activeCountry = "",
-  activeSearch = "",
-}: GeneralFAQExplorerProps) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const [searchValue, setSearchValue] = useState(activeSearch);
+type Filters = {
+  category: string;
+  country: string;
+  search: string;
+};
+
+const EMPTY_FILTERS: Filters = { category: "", country: "", search: "" };
+
+function readFiltersFromLocation(): Filters {
+  if (typeof window === "undefined") return EMPTY_FILTERS;
+  const params = new URLSearchParams(window.location.search);
+  return {
+    category: params.get("category")?.trim() ?? "",
+    country: params.get("country")?.trim() ?? "",
+    search: params.get("search")?.trim() ?? "",
+  };
+}
+
+/**
+ * Mirror filter state into the URL so links can be shared, but do it with the
+ * History API only. Using the Next router here would trigger an RSC request
+ * (a server function invocation) on every filter change / keystroke.
+ */
+function writeFiltersToLocation(filters: Filters) {
+  if (typeof window === "undefined") return;
+  const params = new URLSearchParams();
+  if (filters.category) params.set("category", filters.category);
+  if (filters.country) params.set("country", filters.country);
+  if (filters.search) params.set("search", filters.search);
+  const query = params.toString();
+  const next = `${window.location.pathname}${query ? `?${query}` : ""}`;
+  const current = `${window.location.pathname}${window.location.search}`;
+  if (next !== current) {
+    window.history.replaceState(window.history.state, "", next);
+  }
+}
+
+function matchesCountry(faq: GeneralFAQ, country: string) {
+  if (!country) return true;
+  // Mirrors the API: FAQs with no countries apply everywhere.
+  if (!faq.countries?.length) return true;
+  const needle = country.toLowerCase();
+  return faq.countries.some(
+    (item) => item.slug.toLowerCase() === needle || item.code.toLowerCase() === needle,
+  );
+}
+
+function matchesSearch(faq: GeneralFAQ, search: string) {
+  if (!search) return true;
+  const needle = search.toLowerCase();
+  return faq.question_en.toLowerCase().includes(needle) || faq.answer_en.toLowerCase().includes(needle);
+}
+
+export function GeneralFAQExplorer({ categories, countries, faqs }: GeneralFAQExplorerProps) {
+  // Render unfiltered on the server (static HTML) and hydrate filters from the
+  // URL on the client.
+  const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS);
+  const [searchValue, setSearchValue] = useState("");
   const [openId, setOpenId] = useState<number | null>(faqs[0]?.id ?? null);
   const [activeImage, setActiveImage] = useState<{ src: string; alt: string; caption?: string } | null>(null);
 
   useEffect(() => {
-    setSearchValue(activeSearch);
-  }, [activeSearch]);
+    const initial = readFiltersFromLocation();
+    setFilters(initial);
+    setSearchValue(initial.search);
+  }, []);
+
+  // Debounce typing into the search filter; purely local state.
+  useEffect(() => {
+    const trimmed = searchValue.trim();
+    if (trimmed === filters.search) return;
+    const timeout = window.setTimeout(() => {
+      setFilters((prev) => ({ ...prev, search: trimmed }));
+    }, 200);
+    return () => window.clearTimeout(timeout);
+  }, [searchValue, filters.search]);
 
   useEffect(() => {
-    const timeout = window.setTimeout(() => {
-      updateParam("search", searchValue.trim(), { resetPage: true });
-    }, 300);
-
-    return () => window.clearTimeout(timeout);
-  }, [searchValue]);
+    writeFiltersToLocation(filters);
+  }, [filters]);
 
   const categoryBySlug = useMemo(() => new Map(categories.map((category) => [category.slug, category])), [categories]);
-  const selectedCategory = activeCategory ? categoryBySlug.get(activeCategory) : null;
+  const selectedCategory = filters.category ? categoryBySlug.get(filters.category) : null;
 
-  function buildHref(updates: Record<string, string>) {
-    const params = new URLSearchParams(searchParams.toString());
+  const visibleFaqs = useMemo(
+    () =>
+      faqs.filter(
+        (faq) =>
+          (!filters.category || faq.category?.slug === filters.category) &&
+          matchesCountry(faq, filters.country) &&
+          matchesSearch(faq, filters.search),
+      ),
+    [faqs, filters],
+  );
 
-    Object.entries(updates).forEach(([key, value]) => {
-      if (value) {
-        params.set(key, value);
-      } else {
-        params.delete(key);
-      }
-    });
-    params.delete("page");
+  useEffect(() => {
+    if (openId !== null && !visibleFaqs.some((faq) => faq.id === openId)) {
+      setOpenId(visibleFaqs[0]?.id ?? null);
+    }
+  }, [visibleFaqs, openId]);
 
-    const query = params.toString();
-    return query ? `${pathname}?${query}` : pathname;
+  const hasFilters = Boolean(filters.category || filters.country || filters.search);
+
+  function setCategory(category: string) {
+    setFilters((prev) => ({ ...prev, category }));
   }
 
-  function updateParam(key: string, value: string, options?: { resetPage?: boolean }) {
-    const params = new URLSearchParams(searchParams.toString());
+  function setCountry(country: string) {
+    setFilters((prev) => ({ ...prev, country }));
+  }
 
-    if (value) {
-      params.set(key, value);
-    } else {
-      params.delete(key);
-    }
-    if (options?.resetPage) {
-      params.delete("page");
-    }
-
-    const query = params.toString();
-    router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+  function clearFilters() {
+    setFilters(EMPTY_FILTERS);
+    setSearchValue("");
   }
 
   return (
@@ -92,52 +142,69 @@ export function GeneralFAQExplorer({
         </label>
 
         <div className="general-faq-category-grid" aria-label="FAQ categories">
-          <Link href={buildHref({ category: "" })} className={`general-faq-category ${!activeCategory ? "is-active" : ""}`}>
+          <button
+            type="button"
+            onClick={() => setCategory("")}
+            className={`general-faq-category ${!filters.category ? "is-active" : ""}`}
+            aria-pressed={!filters.category}
+          >
             <strong>All FAQs</strong>
             <span>Browse every general safari question.</span>
-          </Link>
+          </button>
           {categories.map((category) => (
-            <Link
+            <button
+              type="button"
               key={category.id}
-              href={buildHref({ category: category.slug })}
-              className={`general-faq-category ${activeCategory === category.slug ? "is-active" : ""}`}
+              onClick={() => setCategory(category.slug)}
+              className={`general-faq-category ${filters.category === category.slug ? "is-active" : ""}`}
+              aria-pressed={filters.category === category.slug}
             >
               <strong>{category.name}</strong>
               {category.description ? <span>{category.description}</span> : null}
-            </Link>
+            </button>
           ))}
         </div>
 
         <div className="general-faq-country-row" aria-label="Country filter">
-          <Link href={buildHref({ country: "" })} className={`filter-chip ${!activeCountry ? "is-active" : ""}`}>
+          <button
+            type="button"
+            onClick={() => setCountry("")}
+            className={`filter-chip ${!filters.country ? "is-active" : ""}`}
+            aria-pressed={!filters.country}
+          >
             All countries
-          </Link>
-          {countries.map((country) => (
-            <Link
-              key={country.id}
-              href={buildHref({ country: country.slug })}
-              className={`filter-chip ${activeCountry.toLowerCase() === country.slug.toLowerCase() ? "is-active" : ""}`}
-            >
-              {country.name}
-            </Link>
-          ))}
+          </button>
+          {countries.map((country) => {
+            const isActive = filters.country.toLowerCase() === country.slug.toLowerCase();
+            return (
+              <button
+                type="button"
+                key={country.id}
+                onClick={() => setCountry(country.slug)}
+                className={`filter-chip ${isActive ? "is-active" : ""}`}
+                aria-pressed={isActive}
+              >
+                {country.name}
+              </button>
+            );
+          })}
         </div>
       </section>
 
       <section className="general-faq-results" aria-label="FAQ results">
         <div className="general-faq-results-header">
           <div>
-            <p className="eyebrow">Showing {faqs.length} answer{faqs.length === 1 ? "" : "s"}</p>
+            <p className="eyebrow">Showing {visibleFaqs.length} answer{visibleFaqs.length === 1 ? "" : "s"}</p>
             <h2>{selectedCategory?.name || "Safari FAQs"}</h2>
           </div>
-          {(activeCategory || activeCountry || activeSearch) ? (
-            <Link href="/faqs" className="text-link">Clear filters</Link>
+          {hasFilters ? (
+            <button type="button" onClick={clearFilters} className="text-link">Clear filters</button>
           ) : null}
         </div>
 
-        {faqs.length ? (
+        {visibleFaqs.length ? (
           <div className="faq-section">
-            {faqs.map((faq) => {
+            {visibleFaqs.map((faq) => {
               const isOpen = openId === faq.id;
               const resolvedLink = faq.resolved_link;
               return (

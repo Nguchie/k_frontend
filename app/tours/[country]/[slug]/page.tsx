@@ -14,6 +14,16 @@ import { getAllGuides, getAllTours, getTour } from "@/lib/api";
 import { getEmbeddableVideoUrl } from "@/lib/media";
 import { absoluteUrl, buildMetadata } from "@/lib/seo";
 
+export const revalidate = 3600;
+
+export async function generateStaticParams() {
+  const tours = await getAllTours();
+  return tours.map((tour) => ({
+    country: tour.destination.country.slug,
+    slug: tour.slug,
+  }));
+}
+
 export async function generateMetadata({
   params,
 }: {

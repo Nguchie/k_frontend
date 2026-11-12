@@ -31,7 +31,7 @@ export function SearchPanel({ compact = false }: SearchPanelProps) {
           placeholder="Search destinations, parks, or tours"
           aria-label="Search destinations, parks, or tours"
         />
-        <Link href={`/tours?${params.toString()}`} className="button primary">
+        <Link href={`/tours?${params.toString()}`} className="button primary" prefetch={false}>
           Search
         </Link>
       </div>

@@ -5,56 +5,30 @@ import { Breadcrumbs } from "@/components/Breadcrumbs";
 import { GeneralFAQExplorer } from "@/components/GeneralFAQExplorer";
 import { JsonLd } from "@/components/JsonLd";
 import { SectionHeading } from "@/components/SectionHeading";
-import { getAllCountries, getFAQCategories, getGeneralFAQs } from "@/lib/api";
+import { getAllCountries, getAllGeneralFAQs, getFAQCategories } from "@/lib/api";
 import { buildMetadata } from "@/lib/seo";
+
+// Statically rendered + ISR. This page must never read searchParams: doing so
+// makes it dynamic and every `/faqs?category=..&search=..` variant becomes a
+// function invocation (which bots were brute-forcing). Filters are applied
+// client-side in GeneralFAQExplorer from the full FAQ list instead.
+export const revalidate = 3600; // must be a literal; matches CONTENT_REVALIDATE_SECONDS
+export const dynamic = "force-static";
 
 const FAQ_DESCRIPTION =
   "Answers to common safari planning questions about packing, honeymoons, payments, travel documents, safety, and East Africa destinations.";
 
-type FAQSearchParams = Record<string, string | string[] | undefined>;
+export const metadata: Metadata = buildMetadata({
+  title: "Safari FAQs",
+  description: FAQ_DESCRIPTION,
+  canonical: "/faqs",
+});
 
-function hasFAQFilters(filters: FAQSearchParams) {
-  return Boolean(
-    (typeof filters.category === "string" && filters.category) ||
-      (typeof filters.country === "string" && filters.country) ||
-      (typeof filters.search === "string" && filters.search),
-  );
-}
-
-export async function generateMetadata({
-  searchParams,
-}: {
-  searchParams: Promise<FAQSearchParams>;
-}): Promise<Metadata> {
-  const filters = await searchParams;
-  return buildMetadata({
-    title: "Safari FAQs",
-    description: FAQ_DESCRIPTION,
-    canonical: "/faqs",
-    // Filter/search URLs are UI state only. Keep one indexable FAQ page.
-    noindex: hasFAQFilters(filters),
-  });
-}
-
-export default async function FAQsPage({
-  searchParams,
-}: {
-  searchParams: Promise<FAQSearchParams>;
-}) {
-  const filters = await searchParams;
-  const category = typeof filters.category === "string" ? filters.category : "";
-  const country = typeof filters.country === "string" ? filters.country : "";
-  const search = typeof filters.search === "string" ? filters.search : "";
-  const apiParams = new URLSearchParams();
-
-  if (category) apiParams.set("category", category);
-  if (country) apiParams.set("country", country);
-  if (search) apiParams.set("search", search);
-
+export default async function FAQsPage() {
   const [categories, countries, faqs] = await Promise.all([
     getFAQCategories(),
     getAllCountries(),
-    getGeneralFAQs(apiParams),
+    getAllGeneralFAQs(),
   ]);
 
   return (
@@ -68,14 +42,7 @@ export default async function FAQsPage({
         />
       </div>
 
-      <GeneralFAQExplorer
-        categories={categories}
-        countries={countries}
-        faqs={faqs}
-        activeCategory={category}
-        activeCountry={country}
-        activeSearch={search}
-      />
+      <GeneralFAQExplorer categories={categories} countries={countries} faqs={faqs} />
 
       <section className="general-faq-cta">
         <div>

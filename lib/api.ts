@@ -188,15 +188,18 @@ export const getFAQCategories = cache(async function getFAQCategories() {
   }
 });
 
-export async function getGeneralFAQs(params?: URLSearchParams) {
+/**
+ * All published FAQs for the main FAQ page. Filtering happens client-side so
+ * /faqs can be statically rendered (ISR) instead of invoking a function per
+ * query-string variant.
+ */
+export const getAllGeneralFAQs = cache(async function getAllGeneralFAQs() {
   try {
-    const query = params?.toString();
-    const response = await fetchJson<GeneralFAQ[] | { results: GeneralFAQ[] }>(`/general-faqs/${query ? `?${query}` : ""}`);
-    return Array.isArray(response) ? response : response.results;
+    return await fetchAllPages<GeneralFAQ>("/general-faqs/");
   } catch {
     return [] as GeneralFAQ[];
   }
-}
+});
 
 export const getGuideCategory = cache(async function getGuideCategory(slug: string) {
   try {

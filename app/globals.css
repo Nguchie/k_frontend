@@ -2324,6 +2324,10 @@ img {
   display: grid;
   gap: 5px;
   padding: 14px;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
   border: 1px solid var(--border);
   border-radius: 16px;
   background: rgba(255, 255, 255, 0.64);
@@ -2359,6 +2363,9 @@ img {
   background: var(--white);
   font-size: 0.92rem;
   font-weight: 700;
+  font-family: inherit;
+  color: inherit;
+  cursor: pointer;
 }
 
 .filter-chip.is-active {
@@ -2369,6 +2376,19 @@ img {
 
 .general-faq-results {
   padding: 22px;
+}
+
+.general-faq-results-header button.text-link {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  cursor: pointer;
+}
+
+.blog-clear-country {
+  display: inline-block;
+  margin-top: 10px;
 }
 
 .general-faq-results-header,

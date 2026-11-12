@@ -9,6 +9,13 @@ import { getAllCountries, getAllDestinations, getAllGuides, getAllTours } from "
 import { getImageSource } from "@/lib/media";
 import { buildMetadata } from "@/lib/seo";
 
+export const revalidate = 3600;
+
+export async function generateStaticParams() {
+  const countries = await getAllCountries();
+  return countries.map((country) => ({ slug: country.slug }));
+}
+
 export async function generateMetadata({
   params,
 }: {
@@ -107,8 +114,8 @@ export default async function CountryDetailPage({
         <section className="detail-block">
           <SectionHeading title="Continue Exploring" body="Move deeper into country-specific tours or planning guides once you have a destination in mind." />
           <div className="button-row">
-            <Link href={`/tours?country=${country.slug}`} className="button primary">Browse Tours</Link>
-            <Link href={`/blog?country=${country.slug}`} className="button secondary">Browse Guides</Link>
+            <Link href={`/tours?country=${country.slug}`} className="button primary" prefetch={false}>Browse Tours</Link>
+            <Link href={`/blog?country=${country.slug}`} className="button secondary" prefetch={false}>Browse Guides</Link>
           </div>
         </section>
       </div>
